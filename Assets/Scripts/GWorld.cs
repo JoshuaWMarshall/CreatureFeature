@@ -18,7 +18,7 @@ public sealed class GWorld
         
     }
 
-    private static GWorld Instance
+    public static GWorld Instance
     {
         get { return instance; }
     }
