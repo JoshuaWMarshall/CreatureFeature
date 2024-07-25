@@ -2,16 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public abstract class GAction : MonoBehaviour
 {
     public string actionName = "Action";
     public float cost = 1.0f;
     public GameObject target;
-    public GameObject targetTag;
+    public string targetTag;
     public float duration = 0;
     public WorldState[] preConditions;
     public WorldState[] afterEffects;
+    public NavMeshAgent agent;
 
     public Dictionary<string, int> preconditions;
     public Dictionary<string, int> effects;
@@ -28,6 +30,7 @@ public abstract class GAction : MonoBehaviour
 
     public void Awake()
     {
+        agent = this.gameObject.GetComponent<NavMeshAgent>();
         if (preConditions != null)
         {
             foreach (WorldState w in preConditions)
