@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Unity.AI.Navigation;
 
 [RequireComponent(typeof(MeshFilter))]
 public class MeshGenerator : MonoBehaviour
@@ -32,6 +33,8 @@ public class MeshGenerator : MonoBehaviour
     public GameObject waterMeshPrefab;
     public float waterHeight = 100f;
 
+    public NavMeshSurface navMeshSurface;
+
     void Start()
     {
         // Use this method if you havn't filled out the properties in the inspector
@@ -40,6 +43,9 @@ public class MeshGenerator : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         CreateNewMap();
+
+       navMeshSurface = gameObject.GetComponent<NavMeshSurface>();
+       navMeshSurface.BuildNavMesh();
     }
 
     private void SetNullProperties() 
@@ -209,7 +215,11 @@ public class MeshGenerator : MonoBehaviour
             // *2 as water mesh is 50m, map mesh is 100m
             GameObject waterMesh = Instantiate(waterMeshPrefab, new Vector3((xSize * MESH_SCALE/2), waterHeight, (zSize * MESH_SCALE/2)), Quaternion.identity);
             waterMesh.transform.localScale = new Vector3(xSize * 2, 1, zSize * 2);
-            waterMesh.layer = 4; 
+            waterMesh.layer = 4;
+
+            NavMeshModifier navMeshModifier =  waterMesh.AddComponent<NavMeshModifier>();
+            navMeshModifier.overrideArea = true;
+            navMeshModifier.area = 1;
         }
         else
         {
