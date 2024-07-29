@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
-public class MeshGeneratorV2 : MonoBehaviour
+public class MeshGenerator : MonoBehaviour
 {
     Mesh mesh;
     private int MESH_SCALE = 100;
@@ -29,6 +29,8 @@ public class MeshGeneratorV2 : MonoBehaviour
     public int seed;
 
     private float lastNoiseHeight;
+    public GameObject waterMeshPrefab;
+    public float waterHeight = 100f;
 
     void Start()
     {
@@ -54,7 +56,9 @@ public class MeshGeneratorV2 : MonoBehaviour
         CreateMeshShape();
         CreateTriangles();
         ColorMap();
+        CreateWaterMesh(); // Create the water mesh
         UpdateMesh();
+
     }
 
     private void CreateMeshShape ()
@@ -82,7 +86,7 @@ public class MeshGeneratorV2 : MonoBehaviour
 
     private Vector2[] GetOffsetSeed()
     {
-        //seed = Random.Range(0, 1000);
+        seed = Random.Range(0, 1000);
         
         // changes area of map
         System.Random prng = new System.Random(seed);
@@ -179,14 +183,18 @@ public class MeshGeneratorV2 : MonoBehaviour
             if(System.Math.Abs(lastNoiseHeight - worldPt.y) < 25)
             {
                 // min height for object generation
-                if (noiseHeight > 100)
+                if (noiseHeight > waterHeight + 0.1f)
                 {
                     // Chance to generate
                     if (Random.Range(1, 5) == 1)
                     {
                         GameObject objectToSpawn = objects[Random.Range(0, objects.Length)];
                         var spawnAboveTerrainBy = noiseHeight * 2;
-                        Instantiate(objectToSpawn, new Vector3(mesh.vertices[i].x * MESH_SCALE, spawnAboveTerrainBy, mesh.vertices[i].z * MESH_SCALE), Quaternion.identity);
+                        GameObject clone = Instantiate(objectToSpawn, new Vector3(mesh.vertices[i].x * MESH_SCALE, spawnAboveTerrainBy, mesh.vertices[i].z * MESH_SCALE), Quaternion.identity);
+
+                        clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
+                        clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
+
                     }
                 }
             }
@@ -194,18 +202,35 @@ public class MeshGeneratorV2 : MonoBehaviour
         }
     }
 
+    private void CreateWaterMesh()
+    {
+        if (waterMeshPrefab != null)
+        {
+            // *2 as water mesh is 50m, map mesh is 100m
+            GameObject waterMesh = Instantiate(waterMeshPrefab, new Vector3((xSize * MESH_SCALE/2), waterHeight, (zSize * MESH_SCALE/2)), Quaternion.identity);
+            waterMesh.transform.localScale = new Vector3(xSize * 2, 1, zSize * 2);
+            waterMesh.layer = 4; 
+        }
+        else
+        {
+            Debug.LogWarning("Water Mesh Prefab is not assigned.");
+        }
+    }
+
+
     private void UpdateMesh()
     {
         mesh.Clear();
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.colors = colors;
-        mesh.RecalculateNormals();
         mesh.RecalculateTangents();
+        mesh.RecalculateNormals();
+
 
         GetComponent<MeshCollider>().sharedMesh = mesh;
         gameObject.transform.localScale = new Vector3(MESH_SCALE, MESH_SCALE, MESH_SCALE);
-
+        gameObject.layer = 13;
         MapEmbellishments();
     }
 

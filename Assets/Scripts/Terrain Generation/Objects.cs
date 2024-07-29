@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Objects : MonoBehaviour
 {
+    [SerializeField] private LayerMask terrainLayerMask = 13;
+    public float waterHeight = 100f; // Set the height of the water plane
+
     void Start()
     {
         FindLand();
@@ -11,22 +14,33 @@ public class Objects : MonoBehaviour
 
     public void FindLand()
     {
-        Ray ray = new Ray(transform.position, -transform.up);
+        Ray rayDown = new Ray(transform.position, Vector3.down);
+        Ray rayUp = new Ray(transform.position, Vector3.up);
         RaycastHit hitInfo;
-        if (Physics.Raycast(ray, out hitInfo))
+
+        bool foundLand = false;
+
+        if (Physics.Raycast(rayDown, out hitInfo, Mathf.Infinity, terrainLayerMask))
         {
-            transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y, hitInfo.point.z);
+            transform.position = hitInfo.point;
+            foundLand = true;
         }
-        else
+        else if (Physics.Raycast(rayUp, out hitInfo, Mathf.Infinity, terrainLayerMask))
         {
-            ray = new Ray(transform.position, transform.up);
-            if (Physics.Raycast(ray, out hitInfo))
-            {
-                transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y, hitInfo.point.z);
-            }
+            transform.position = hitInfo.point;
+            foundLand = true;
         }
 
-        if (!Physics.Raycast(ray, out hitInfo))
+        if (foundLand)
+        {
+            // Check if the object is below the water height
+            if (transform.position.y <= waterHeight)
+            {
+                Debug.Log("Object is below water");
+                Destroy(gameObject);
+            }
+        }
+        else
         {
             Destroy(gameObject);
         }
