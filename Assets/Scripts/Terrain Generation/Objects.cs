@@ -36,7 +36,7 @@ public class Objects : MonoBehaviour
             // Check if the object is below the water height
             if (transform.position.y <= waterHeight)
             {
-                Debug.Log("Object is below water");
+                //Debug.Log("Object is below water");
                 Destroy(gameObject);
             }
         }

@@ -30,28 +30,29 @@ public class Herbivore : GAgent
     protected override void Start()
     {
         base.Start();
-        SubGoal s2 = new SubGoal("Wait", 1, true);
+        SubGoal s2 = new SubGoal("Eat", 1, true);
         goals.Add(s2, 1);
     }
 
     void Update()
     {
-        if (hunger > 0.5 && goalAdded == false)
-        {
-            s1 = new SubGoal("Eat", 1, true);
-            goals.Add(s1, 3);
-            goalAdded = true;
-        }
-        else if (hunger < 0.5 && goalAdded == true)
-        {
-            goals.Remove(s1);
-            goalAdded = false;
-        }
+        //if (hunger > 0.5 && goalAdded == false)
+        //{
+        //    s1 = new SubGoal("Eat", 1, true);
+        //    Debug.Log(goals.ToString());
+        //    goals.Add(s1, 3);
+        //    goalAdded = true;
+        //}
+        //else if (hunger < 0.5 && goalAdded == true)
+        //{
+        //    goals.Remove(s1);
+        //    goalAdded = false;
+        //}
 
-        if (hunger <= 1 && hunger >=0)
-        {
-            hunger += 0.01f * Time.deltaTime;
-            Mathf.Clamp(hunger, 0, 1);
-        }
+        //if (hunger <= 1 && hunger >=0)
+        //{
+        //    hunger += 0.01f * Time.deltaTime;
+        //    Mathf.Clamp(hunger, 0, 1);
+        //}
     }
 }

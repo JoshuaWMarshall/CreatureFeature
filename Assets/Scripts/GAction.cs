@@ -22,6 +22,11 @@ public abstract class GAction : MonoBehaviour
 
     public bool running = false;
 
+    private void Start()
+    {
+        agent = GetComponent<NavMeshAgent>();
+    }
+
     public GAction()
     {
         preconditions = new Dictionary<string, int>();

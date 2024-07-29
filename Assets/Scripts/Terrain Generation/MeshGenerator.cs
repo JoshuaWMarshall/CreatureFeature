@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Unity.AI.Navigation;
+using UnityEngine.AI;
 
 [RequireComponent(typeof(MeshFilter))]
 public class MeshGenerator : MonoBehaviour
@@ -35,6 +36,9 @@ public class MeshGenerator : MonoBehaviour
 
     public NavMeshSurface navMeshSurface;
 
+    public GameObject[] dinos;
+    public int maxDinos;
+
     void Start()
     {
         // Use this method if you havn't filled out the properties in the inspector
@@ -46,6 +50,8 @@ public class MeshGenerator : MonoBehaviour
 
        navMeshSurface = gameObject.GetComponent<NavMeshSurface>();
        navMeshSurface.BuildNavMesh();
+
+        MapEmbellishments();
     }
 
     private void SetNullProperties() 
@@ -191,7 +197,7 @@ public class MeshGenerator : MonoBehaviour
                 // min height for object generation
                 if (noiseHeight > waterHeight + 0.1f)
                 {
-                    // Chance to generate
+                    // Chance to generate trees
                     if (Random.Range(1, 5) == 1)
                     {
                         GameObject objectToSpawn = objects[Random.Range(0, objects.Length)];
@@ -205,6 +211,24 @@ public class MeshGenerator : MonoBehaviour
                 }
             }
             lastNoiseHeight = noiseHeight;
+        }
+
+        for (int i = 0; i < maxDinos; i++)
+        {
+            Vector3 worldPt = transform.TransformPoint(mesh.vertices[Random.Range(0, vertices.Length)]);
+            GameObject objectToSpawn = dinos[Random.Range(0, dinos.Length)];
+
+            NavMeshHit closestHit;
+            if (NavMesh.SamplePosition(worldPt, out closestHit, 500, 1))
+            {
+                objectToSpawn.transform.position = closestHit.position;
+
+            }
+            GameObject clone = Instantiate(objectToSpawn, objectToSpawn.transform.position, Quaternion.identity);
+
+            clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
+            clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
+            clone.AddComponent<NavMeshAgent>();
         }
     }
 
@@ -241,7 +265,6 @@ public class MeshGenerator : MonoBehaviour
         GetComponent<MeshCollider>().sharedMesh = mesh;
         gameObject.transform.localScale = new Vector3(MESH_SCALE, MESH_SCALE, MESH_SCALE);
         gameObject.layer = 13;
-        MapEmbellishments();
     }
 
 }
