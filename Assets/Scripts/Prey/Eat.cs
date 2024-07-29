@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Eat : GAction
 {
-    private bool running = false;
+    private bool running2 = false;
     public override bool PrePerform()
     {
         return true;
@@ -15,22 +15,23 @@ public class Eat : GAction
         return true;
     }
 
-    public void Update()
+    /*public void Update()
     {
-        if (Herbivore.Instance.currentAction == this && running == false)
+        if (Herbivore.Instance.currentAction == this && running2 == false)
         {
+            Debug.Log("coretine start");
             StartCoroutine(EffectHunger());
-            running = true;
+            running2 = true;
         }
         
         
-    }
+    }*/
 
-    IEnumerator EffectHunger()
+    /*IEnumerator EffectHunger()
     {
         yield return new WaitForSeconds(3);
         Herbivore.Instance.hunger -= 0.5f;
-        running = false;
+        running2 = false;
         yield return null;
-    }
+    }*/
 }
