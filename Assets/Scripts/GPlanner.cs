@@ -98,22 +98,22 @@ public class GPlanner
                     }
 
                     Node node = new Node(parent, parent.cost + action.cost, currentState, action);
-                    if (GoalAchieved(goal, currentState))
+                if (GoalAchieved(goal, currentState))
+                {
+                    leaves.Add(node);
+                    foundPath = true;
+                }
+                else
+                {
+                    List<GAction> subset = ActionSubSet(usuableActions, action);
+                    bool found = BuildGraph(node, leaves, subset, goal);
+                    if (found)
                     {
-                        leaves.Add(node);
                         foundPath = true;
-                    }
-                    else
-                    {
-                        List<GAction> subset = ActionSubSet(usuableActions, action);
-                        bool found = BuildGraph(node, leaves, subset, goal);
-                        if (found)
-                        {
-                            foundPath = true;
-                        }
                     }
                 }
             }
+        }
 
             return foundPath;
         }

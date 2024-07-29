@@ -8,7 +8,7 @@ TagManager:
   - CinemachineTarget
   - ScreenCamera
   - cockpit_capitalLaser
-  - RestArea
+  - Plant
   layers:
   - Default
   - TransparentFX
@@ -23,7 +23,7 @@ TagManager:
   - Occluder
   - Camera
   - MainCameraOnly
-  - 
+  - Terrain
   - 
   - 
   - 
