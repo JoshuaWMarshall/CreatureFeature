@@ -118,7 +118,7 @@ public class GPlanner
             return foundPath;
         }
 
-        private bool GoalAchived(Dictionary<string, int> goal, Dictionary<string, int> state)
+        private bool GoalAchieved(Dictionary<string, int> goal, Dictionary<string, int> state)
         {
             foreach (KeyValuePair<string, int> g in goal)
             {
