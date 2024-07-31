@@ -14,7 +14,7 @@ public abstract class GAction : MonoBehaviour
     public WorldState[] preConditions;
     public WorldState[] afterEffects;
     public NavMeshAgent agent;
-
+    public GAgent gAgent;
     public Dictionary<string, int> preconditions;
     public Dictionary<string, int> effects;
 

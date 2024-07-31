@@ -89,32 +89,31 @@ public class GPlanner
                 if (action.IsAchievableGiven(parent.state))
                 {
                     Dictionary<string, int> currentState = new Dictionary<string, int>(parent.state);
-                    foreach (KeyValuePair<string, int>eff in action.effects)
+                    foreach (KeyValuePair<string, int> eff in action.effects)
                     {
                         if (!currentState.ContainsKey(eff.Key))
                         {
-                            currentState.Add(eff.Key,eff.Value);
+                            currentState.Add(eff.Key, eff.Value);
                         }
                     }
 
                     Node node = new Node(parent, parent.cost + action.cost, currentState, action);
-                if (GoalAchieved(goal, currentState))
-                {
-                    leaves.Add(node);
-                    foundPath = true;
-                }
-                else
-                {
-                    List<GAction> subset = ActionSubSet(usuableActions, action);
-                    bool found = BuildGraph(node, leaves, subset, goal);
-                    if (found)
+                    if (GoalAchieved(goal, currentState))
                     {
+                        leaves.Add(node);
                         foundPath = true;
+                    }
+                    else
+                    {
+                        List<GAction> subset = ActionSubSet(usuableActions, action);
+                        bool found = BuildGraph(node, leaves, subset, goal);
+                        if (found)
+                        {
+                            foundPath = true;
+                        }
                     }
                 }
             }
-        }
-
             return foundPath;
         }
 

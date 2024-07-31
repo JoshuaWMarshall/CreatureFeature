@@ -23,7 +23,7 @@ public class WorldStates : MonoBehaviour
         return states.ContainsKey(key);
     }
 
-    void AddState(string key, int value)
+    public void AddState(string key, int value)
     {
         states.Add(key,value);
     }
@@ -52,7 +52,7 @@ public class WorldStates : MonoBehaviour
         }
     }
 
-    public void SetSate(string key, int value)
+    public void SetState(string key, int value)
     {
         if (states.ContainsKey(key))
         {

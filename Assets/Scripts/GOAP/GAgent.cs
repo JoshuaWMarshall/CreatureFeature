@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using System.Security.AccessControl;
 
 public class SubGoal
 {
@@ -21,37 +20,50 @@ public class GAgent : MonoBehaviour
 
     public List<GAction> actions = new List<GAction>();
     public Dictionary<SubGoal, int> goals = new Dictionary<SubGoal, int>();
-    public WorldStates beliefs = new WorldStates();
+    public WorldStates worldStates;
 
     GPlanner planner;
-    Queue<GAction> actionQueue;
+    public Queue<GAction> actionQueue;
     public GAction currentAction;
     SubGoal currentGoal;
 
+    public float hunger = 0;
+    public float energy = 100;
+    public float thirst = 0;
+
+    public float hungerRate = 1f;
+    public float energyRate = 1f;
+    public float thirstRate = 1f;
+    
     // Start is called before the first frame update
     protected virtual void Start()
     {
+        worldStates = gameObject.AddComponent<WorldStates>();
+        
         GAction[] acts = this.GetComponents<GAction>();
         foreach (GAction a in acts)
+        {
             actions.Add(a);
+            a.gAgent = this;
+        }
     }
 
     private bool invoked = false;
 
-    void CompleteAction()
+    public void CompleteAction()
     {
         currentAction.running = false;
         currentAction.PostPerform();
         invoked = false; 
     }
 
-    void LateUpdate()
+     void LateUpdate()
     {
         if (currentAction != null && currentAction.running)
         {
             float distanceToTarget =
                 Vector3.Distance(currentAction.target.transform.position, this.transform.position);
-             if (currentAction.agent.hasPath && distanceToTarget < 0.5f)
+             if (currentAction.agent.hasPath && distanceToTarget < 3f)
             {
                 if (!invoked)
                 {
@@ -59,7 +71,7 @@ public class GAgent : MonoBehaviour
                     invoked = true;
                 }
             }
-             return;
+            return;
         }
 
 

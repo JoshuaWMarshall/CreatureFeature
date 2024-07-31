@@ -9,6 +9,8 @@ TagManager:
   - ScreenCamera
   - cockpit_capitalLaser
   - Plant
+  - RestArea
+  - Water
   layers:
   - Default
   - TransparentFX

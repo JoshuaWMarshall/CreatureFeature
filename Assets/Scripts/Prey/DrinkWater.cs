@@ -2,20 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Resting : GAction
+public class DrinkWater : GAction
 {
-   public float restModifier = 1;
-   
+   public float thirstModifier = 1;
    public override bool PrePerform()
    {
-      
-      gAgent.energy += 10 * restModifier;
+      gAgent.thirst -= 20 * thirstModifier;
       gAgent.CompleteAction();
       return true;
    }
    public override bool PostPerform()
    {
+      
       return true;
    }
-   
+
 }

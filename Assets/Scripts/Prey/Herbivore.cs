@@ -16,43 +16,33 @@ public class Herbivore : GAgent
             return _instance;
         }
     }
-
+    
     private Herbivore()
     {
         // Private constructor to prevent external instantiation
+        hunger = 0;
+        energy = 100;
+        thirst = 0;
     }
-
-    public float hunger = 0;
-    private bool goalAdded = false;
-
-    private SubGoal s1;
-
+    
     protected override void Start()
     {
         base.Start();
-        SubGoal s2 = new SubGoal("Eat", 1, true);
-        goals.Add(s2, 1);
+        
+        InvokeRepeating("UpdateStates", 1f,1f);
     }
 
     void Update()
     {
-        //if (hunger > 0.5 && goalAdded == false)
-        //{
-        //    s1 = new SubGoal("Eat", 1, true);
-        //    Debug.Log(goals.ToString());
-        //    goals.Add(s1, 3);
-        //    goalAdded = true;
-        //}
-        //else if (hunger < 0.5 && goalAdded == true)
-        //{
-        //    goals.Remove(s1);
-        //    goalAdded = false;
-        //}
+        hunger = Mathf.Clamp(hunger + hungerRate * Time.deltaTime, 0, 100);
+        energy = Mathf.Clamp(energy - energyRate * Time.deltaTime, 0, 100);
+        thirst = Mathf.Clamp(thirst + thirstRate * Time.deltaTime, 0, 100);
+    }
 
-        //if (hunger <= 1 && hunger >=0)
-        //{
-        //    hunger += 0.01f * Time.deltaTime;
-        //    Mathf.Clamp(hunger, 0, 1);
-        //}
+    private void UpdateStates()
+    {
+        worldStates.SetState("isThirsty", (int)thirst);
+        worldStates.SetState("isHungry", (int)hunger);
+        worldStates.SetState("isTired", 100 - (int)energy);
     }
 }
