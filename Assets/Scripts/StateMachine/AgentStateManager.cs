@@ -134,8 +134,9 @@ public class IdleState : AgentBaseState
     public override void ExitState(AgentStateManager stateManager)
     {
         Debug.Log("Exiting Idle State");
-        
-                
+
+        goal = stateManager.herbivore.GetGoal("Idle");
+               
         stateManager.herbivore.goals.Remove(goal);
     }
     
@@ -169,7 +170,9 @@ public class EatingState : AgentBaseState
     public override void ExitState(AgentStateManager stateManager)
     {
         Debug.Log("Exiting Eating State");
-        
+
+        goal = stateManager.herbivore.GetGoal("Eat");
+
         stateManager.herbivore.goals.Remove(goal);
     }
 }
@@ -193,6 +196,7 @@ public class RestingState : AgentBaseState
     public override void ExitState(AgentStateManager stateManager)
     {
         Debug.Log("Exiting Resting State");
+        goal = stateManager.herbivore.GetGoal("Rest");
         stateManager.herbivore.goals.Remove(goal);
     }
 }
@@ -216,6 +220,7 @@ public class DrinkingState : AgentBaseState
     public override void ExitState(AgentStateManager stateManager)
     {
         Debug.Log("Exiting Drinking State");
+        goal = stateManager.herbivore.GetGoal("Drink");
         stateManager.herbivore.goals.Remove(goal);
     }
 }

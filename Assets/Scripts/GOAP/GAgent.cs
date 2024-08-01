@@ -50,6 +50,22 @@ public class GAgent : MonoBehaviour
 
     private bool invoked = false;
 
+
+    public SubGoal GetGoal(string goalName)
+    {
+        SubGoal goalToGet = null;
+
+        foreach (KeyValuePair<SubGoal, int> g in goals)
+        {
+            if (g.Key.sgoals.ContainsKey(goalName))
+            {
+                goalToGet = g.Key;
+            }
+        }
+
+        return goalToGet;
+    }
+
     public void CompleteAction()
     {
         currentAction.running = false;

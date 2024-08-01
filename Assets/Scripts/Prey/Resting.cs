@@ -10,7 +10,6 @@ public class Resting : GAction
    {
       
       gAgent.energy += 10 * restModifier;
-      gAgent.CompleteAction();
       return true;
    }
    public override bool PostPerform()

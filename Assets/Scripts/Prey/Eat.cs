@@ -20,7 +20,6 @@ public class Eat : GAction
 
          gAgent.hunger -= 10 * hungerModifier;
 
-         gAgent.CompleteAction();
          return true;
     }
     public override bool PostPerform()
