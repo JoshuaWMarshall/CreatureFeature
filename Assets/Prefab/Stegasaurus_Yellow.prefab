@@ -817,11 +817,16 @@ GameObject:
   - component: {fileID: 2472026467174266479}
   - component: {fileID: 2472026467174266472}
   - component: {fileID: -6935064148249872170}
+  - component: {fileID: 11646413341907981}
+  - component: {fileID: 2019776383279592525}
   - component: {fileID: 3877144483562535591}
   - component: {fileID: -354038753303140340}
   - component: {fileID: 3096028984558014023}
   - component: {fileID: 5209755783191200500}
-  - component: {fileID: 2019776383279592525}
+  - component: {fileID: 8771039398729482210}
+  - component: {fileID: 7520063125710707172}
+  - component: {fileID: 7454009631883005037}
+  - component: {fileID: 3969569601185882291}
   m_Layer: 0
   m_Name: Stegasaurus_Yellow
   m_TagString: Untagged
@@ -838,7 +843,7 @@ Transform:
   m_GameObject: {fileID: 3354916914559454012}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1700, y: 429.05426, z: 4800}
+  m_LocalPosition: {x: 3300, y: 158.79312, z: 200}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1051,6 +1056,43 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8192
   waterHeight: 100
+--- !u!195 &11646413341907981
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3354916914559454012}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &2019776383279592525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3354916914559454012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af20a06f6e9be7b419b5e759f66ec962, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  herbivore: {fileID: 0}
+  currentAgentGoal: 0
+  navMeshAgent: {fileID: 0}
 --- !u!114 &3877144483562535591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1064,14 +1106,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actions: []
-  worldStates: {fileID: 0}
+  worldStates: {fileID: 3969569601185882291}
   currentAction: {fileID: 0}
   hunger: 0
   energy: 100
   thirst: 0
-  hungerRate: 1
-  energyRate: 1
-  thirstRate: 1
+  hungerRate: 0.6
+  energyRate: 0.8
+  thirstRate: 0.7
 --- !u!114 &-354038753303140340
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1092,7 +1134,7 @@ MonoBehaviour:
   preConditions: []
   afterEffects:
   - key: FoundFood
-    value: 0
+    value: 1
   agent: {fileID: 0}
   gAgent: {fileID: 0}
   agentBeliefs: {fileID: 0}
@@ -1112,11 +1154,11 @@ MonoBehaviour:
   actionName: Eat
   cost: 1
   target: {fileID: 0}
-  targetTag: 
+  targetTag: Plant
   duration: 3
   preConditions:
   - key: FoundFood
-    value: 0
+    value: 1
   afterEffects:
   - key: Eat
     value: 0
@@ -1124,7 +1166,7 @@ MonoBehaviour:
   gAgent: {fileID: 0}
   agentBeliefs: {fileID: 0}
   running: 0
-  hungerModifier: 1
+  hungerModifier: 10
 --- !u!114 &5209755783191200500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1144,14 +1186,14 @@ MonoBehaviour:
   duration: 0
   preConditions: []
   afterEffects:
-  - key: Wait
+  - key: Rest
     value: 0
   agent: {fileID: 0}
   gAgent: {fileID: 0}
   agentBeliefs: {fileID: 0}
   running: 0
-  restModifier: 1
---- !u!114 &2019776383279592525
+  restModifier: 10
+--- !u!114 &8771039398729482210
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1160,12 +1202,87 @@ MonoBehaviour:
   m_GameObject: {fileID: 3354916914559454012}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af20a06f6e9be7b419b5e759f66ec962, type: 3}
+  m_Script: {fileID: 11500000, guid: efcf95fd2a80b5e419c740c476c9781f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  herbivore: {fileID: 0}
-  currentAgentGoal: 0
-  navMeshAgent: {fileID: 0}
+  actionName: Action
+  cost: 1
+  target: {fileID: 0}
+  targetTag: Water
+  duration: 0
+  preConditions: []
+  afterEffects:
+  - key: FoundWater
+    value: 0
+  agent: {fileID: 0}
+  gAgent: {fileID: 0}
+  agentBeliefs: {fileID: 0}
+  running: 0
+--- !u!114 &7520063125710707172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3354916914559454012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d147bb38f47c914b9e0e418c8f87255, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: Action
+  cost: 1
+  target: {fileID: 0}
+  targetTag: Water
+  duration: 3
+  preConditions:
+  - key: FoundWater
+    value: 0
+  afterEffects:
+  - key: Drink
+    value: 0
+  agent: {fileID: 0}
+  gAgent: {fileID: 0}
+  agentBeliefs: {fileID: 0}
+  running: 0
+  thirstModifier: 10
+--- !u!114 &7454009631883005037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3354916914559454012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d1eae401893f6549ab49b16b9cb0da4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: Action
+  cost: 1
+  target: {fileID: 0}
+  targetTag: 
+  duration: 0
+  preConditions: []
+  afterEffects:
+  - key: Idle
+    value: 0
+  agent: {fileID: 0}
+  gAgent: {fileID: 0}
+  agentBeliefs: {fileID: 0}
+  running: 0
+--- !u!114 &3969569601185882291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3354916914559454012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29a07175e69348447b61736457cd03ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3492827674512313618
 GameObject:
   m_ObjectHideFlags: 0

@@ -38,8 +38,8 @@ public class GAgent : MonoBehaviour
     // Start is called before the first frame update
     protected virtual void Start()
     {
-        worldStates = gameObject.AddComponent<WorldStates>();
-        
+        //worldStates = gameObject.AddComponent<WorldStates>();
+
         GAction[] acts = this.GetComponents<GAction>();
         foreach (GAction a in acts)
         {
@@ -50,6 +50,10 @@ public class GAgent : MonoBehaviour
 
     private bool invoked = false;
 
+    public GAction GetActionByName(string actionName)
+    {
+        return actions.FirstOrDefault(a => a.actionName == actionName);
+    }
 
     public SubGoal GetGoal(string goalName)
     {

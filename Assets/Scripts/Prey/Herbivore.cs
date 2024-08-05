@@ -4,31 +4,35 @@ using UnityEngine;
 
 public class Herbivore : GAgent
 {
-    private static Herbivore _instance;
-    public static Herbivore Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = new Herbivore();
-            }
-            return _instance;
-        }
-    }
+    //private static Herbivore _instance;
+    //public static Herbivore Instance
+    //{
+    //    get
+    //    {
+    //        if (_instance == null)
+    //        {
+    //            _instance = new Herbivore();
+    //        }
+    //        return _instance;
+    //    }
+    //}
     
-    private Herbivore()
-    {
-        // Private constructor to prevent external instantiation
-        hunger = 0;
-        energy = 100;
-        thirst = 0;
-    }
+    //private Herbivore()
+    //{
+    //    // Private constructor to prevent external instantiation
+    //    hunger = 0;
+    //    energy = 100;
+    //    thirst = 0;
+    //}
     
     protected override void Start()
     {
         base.Start();
-        
+        RandomiseStats();
+        worldStates.SetState("isThirsty", (int)thirst);
+        worldStates.SetState("isHungry", (int)hunger);
+        worldStates.SetState("isTired", 100 - (int)energy);
+
         InvokeRepeating("UpdateStates", 1f,1f);
     }
 
@@ -37,6 +41,18 @@ public class Herbivore : GAgent
         hunger = Mathf.Clamp(hunger + hungerRate * Time.deltaTime, 0, 100);
         energy = Mathf.Clamp(energy - energyRate * Time.deltaTime, 0, 100);
         thirst = Mathf.Clamp(thirst + thirstRate * Time.deltaTime, 0, 100);
+    }
+
+    private void RandomiseStats()
+    {
+        hunger = Random.Range(0, 30);
+        thirst = Random.Range(0, 30);
+        energy = Random.Range(70, 100);
+
+        hungerRate = Random.Range(0.5f, 1.5f);
+        energyRate = Random.Range(0.5f, 1.5f);
+        thirstRate = Random.Range(0.5f, 1.5f);
+
     }
 
     private void UpdateStates()

@@ -6,47 +6,21 @@ using UnityEngine;
 public class Eat : GAction
 {
     public float hungerModifier = 1;
-    private float detectionRadius = 5f;
-    private GameObject closestFood;
     
     public override bool PrePerform()
-    {
-         // FindClosestFood();
-         // if (closestFood != null)
-         // {
-         //     Debug.Log("Found closest plant: " + closestFood.name);
-         //     closestFood.GetComponent<RegrowPlant>()?.Eat();
-         // }
-
-         gAgent.hunger -= 10 * hungerModifier;
+    { 
 
          return true;
     }
     public override bool PostPerform()
     {
-        
+
+        gAgent.hunger -= 10 * hungerModifier;
+
+        Destroy(gAgent.currentAction.target);
+        gAgent.currentAction.target = null;
+
         Debug.Log("Finished Eating");
         return true;
-    }
-
-    // private void FindClosestFood()
-    // {
-    //     Collider[] colliders = Physics.OverlapBox(gAgent.transform.position, new Vector3(detectionRadius, detectionRadius, detectionRadius), Quaternion.identity);
-    //     closestFood = null;
-    //     float closestDistance = Mathf.Infinity;
-    //
-    //     foreach (Collider collider in colliders)
-    //     {
-    //         if (collider.CompareTag("Plant"))
-    //         {
-    //             float distance = Vector3.Distance(transform.position, collider.transform.position);
-    //             if (distance < closestDistance)
-    //             {
-    //                 closestDistance = distance;
-    //                 closestFood = collider.gameObject;
-    //             }
-    //         }
-    //     }
-    // }
-    
+    }    
 }

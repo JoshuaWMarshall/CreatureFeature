@@ -7,13 +7,13 @@ public class DrinkWater : GAction
    public float thirstModifier = 1;
    public override bool PrePerform()
    {
-      gAgent.thirst -= 20 * thirstModifier;
+
       return true;
    }
    public override bool PostPerform()
    {
-      
-      return true;
+        gAgent.thirst -= 20 * thirstModifier;
+        return true;
    }
 
 }

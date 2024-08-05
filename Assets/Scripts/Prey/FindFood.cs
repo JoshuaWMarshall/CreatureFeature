@@ -19,7 +19,7 @@ public class FindFood : GAction
    }
    public override bool PostPerform()
    {
-      target = null;
+      //target = null;
       return true;
    }
    

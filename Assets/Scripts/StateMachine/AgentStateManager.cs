@@ -25,14 +25,20 @@ public class AgentStateManager : MonoBehaviour
     public EatingState eatingState = new EatingState();
     public RestingState restingState = new RestingState();
     public DrinkingState drinkingState = new DrinkingState();
+    public Dictionary<string, int> states;
+
+    //KeyValuePair<string, int> highestState = new KeyValuePair<string, int>("", -1);
+    //KeyValuePair<string, int> prevHighestState = new KeyValuePair<string, int>("", -1);
 
     void Start()
     {
         herbivore = GetComponent<Herbivore>();
         navMeshAgent = GetComponent<NavMeshAgent>();
+        states = herbivore.worldStates.GetStates();
+
         SwitchState(idleState); // Start in the Idle state
         
-        InvokeRepeating("CheckTransition", 1f, 1f);
+        //InvokeRepeating("CheckTransition", 1f, 1f);
     }
 
     void Update()
@@ -40,40 +46,6 @@ public class AgentStateManager : MonoBehaviour
         currentState.UpdateState(this);
     }
 
-    void CheckTransition()
-    {
-        var states = herbivore.worldStates.GetStates();
-        
-        KeyValuePair<string, int> highestState = new KeyValuePair<string, int>("", -1);
-        KeyValuePair<string, int> prevHighestState = new KeyValuePair<string, int>("", -1);
-
-        foreach (var state in states)
-        {
-            if (state.Value > highestState.Value)
-            {
-                prevHighestState = highestState;
-                highestState = state;
-            }
-        }
-
-        if (highestState.Value <= 20)
-        {
-            SwitchState(idleState);
-        }
-        else if (highestState.Key == "isHungry")
-        {
-            SwitchState(eatingState);
-        }
-        else if (highestState.Key == "isTired")
-        {
-            SwitchState(restingState);
-        }
-        else if (highestState.Key == "isThirsty")
-        {
-            SwitchState(drinkingState);
-        }
-    }
-    
     public void SwitchState(AgentBaseState newState)
     {
         if (newState == currentState)
@@ -111,12 +83,14 @@ public class IdleState : AgentBaseState
     {
         Debug.Log("Entering Idle State");
         stateManager.currentAgentGoal = AgentGoal.Idle;
-        
+
+        stateManager.herbivore.goals.Clear();
+
         goal = new SubGoal("Idle", 1, false);
-        
+
         stateManager.herbivore.goals.Add(goal, 1);
-        
-        timer = wanderTimer; // Start the timer
+
+        timer = wanderTimer; // Start the timer  
     }
 
     public override void UpdateState(AgentStateManager stateManager)
@@ -129,6 +103,23 @@ public class IdleState : AgentBaseState
             stateManager.navMeshAgent.SetDestination(newPos);
             timer = 0;
         }
+
+        // transitions
+        if (stateManager.states["isHungry"] >= 50)
+        {
+            stateManager.SwitchState(stateManager.eatingState);
+        }
+        else if (stateManager.states["isTired"] >= 50)
+        {
+            stateManager.SwitchState(stateManager.restingState);
+        }
+        else if (stateManager.states["isThirsty"] >= 50)
+        {
+            stateManager.SwitchState(stateManager.drinkingState);
+        }
+
+
+
     }
 
     public override void ExitState(AgentStateManager stateManager)
@@ -136,8 +127,11 @@ public class IdleState : AgentBaseState
         Debug.Log("Exiting Idle State");
 
         goal = stateManager.herbivore.GetGoal("Idle");
-               
-        stateManager.herbivore.goals.Remove(goal);
+
+        if (goal != null)
+        {
+            stateManager.herbivore.goals.Remove(goal);
+        }
     }
     
     private Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)
@@ -148,6 +142,36 @@ public class IdleState : AgentBaseState
         NavMesh.SamplePosition(randDirection, out navHit, dist, layermask);
         return navHit.position;
     }
+
+    private void CheckTransition()
+    {
+        //foreach (var state in states)
+        //{
+        //    if (state.Value > highestState.Value)
+        //    {
+        //        prevHighestState = highestState;
+        //        highestState = state;
+        //    }
+        //}
+
+        //if (highestState.Value <= 20)
+        //{
+        //    SwitchState(idleState);
+        //}
+        //else if (highestState.Key == "isHungry")
+        //{
+        //    SwitchState(eatingState);
+        //}
+        //else if (highestState.Key == "isTired")
+        //{
+        //    SwitchState(restingState);
+        //}
+        //else if (highestState.Key == "isThirsty")
+        //{
+        //    SwitchState(drinkingState);
+        //}
+    }
+
 }
 
 public class EatingState : AgentBaseState
@@ -157,14 +181,17 @@ public class EatingState : AgentBaseState
         Debug.Log("Entering Eating State");
         stateManager.currentAgentGoal = AgentGoal.Eating;
 
-        goal = new SubGoal("Eat", 1, false);
+        goal = new SubGoal("Eat", 1, true);
         
         stateManager.herbivore.goals.Add(goal, 1);
     }
 
     public override void UpdateState(AgentStateManager stateManager)
     {
-        
+        if(stateManager.states["isHungry"] < 30)
+        {
+            stateManager.SwitchState(stateManager.idleState);
+        }
     }
 
     public override void ExitState(AgentStateManager stateManager)
@@ -173,7 +200,10 @@ public class EatingState : AgentBaseState
 
         goal = stateManager.herbivore.GetGoal("Eat");
 
-        stateManager.herbivore.goals.Remove(goal);
+        if (goal != null)
+        {
+            stateManager.herbivore.goals.Remove(goal);
+        }
     }
 }
 
@@ -184,20 +214,27 @@ public class RestingState : AgentBaseState
         Debug.Log("Entering Resting State");
         stateManager.currentAgentGoal = AgentGoal.Resting;
         
-        goal = new SubGoal("Rest", 1, false);
+        goal = new SubGoal("Rest", 1, true);
         stateManager.herbivore.goals.Add(goal, 1);
     }
 
     public override void UpdateState(AgentStateManager stateManager)
     {
-
+        if (stateManager.states["isTired"] < 30)
+        {
+            stateManager.SwitchState(stateManager.idleState);
+        }
     }
 
     public override void ExitState(AgentStateManager stateManager)
     {
         Debug.Log("Exiting Resting State");
         goal = stateManager.herbivore.GetGoal("Rest");
-        stateManager.herbivore.goals.Remove(goal);
+        
+        if (goal != null)
+        {
+            stateManager.herbivore.goals.Remove(goal);
+        }
     }
 }
 
@@ -208,20 +245,27 @@ public class DrinkingState : AgentBaseState
         Debug.Log("Entering Drinking State");
         stateManager.currentAgentGoal = AgentGoal.Drinking;
         
-        goal = new SubGoal("Drink", 1, false);
+        goal = new SubGoal("Drink", 1, true);
         stateManager.herbivore.goals.Add(goal, 1);
     }
 
     public override void UpdateState(AgentStateManager stateManager)
     {
-        
+        if (stateManager.states["isThirsty"] < 30)
+        {
+            stateManager.SwitchState(stateManager.idleState);
+        }
     }
 
     public override void ExitState(AgentStateManager stateManager)
     {
         Debug.Log("Exiting Drinking State");
         goal = stateManager.herbivore.GetGoal("Drink");
-        stateManager.herbivore.goals.Remove(goal);
+        
+        if (goal != null)
+        {
+            stateManager.herbivore.goals.Remove(goal);
+        }
     }
 }
 #endregion

@@ -9,12 +9,12 @@ public class Resting : GAction
    public override bool PrePerform()
    {
       
-      gAgent.energy += 10 * restModifier;
       return true;
    }
    public override bool PostPerform()
    {
-      return true;
+        gAgent.energy += 10 * restModifier;
+        return true;
    }
    
 }
