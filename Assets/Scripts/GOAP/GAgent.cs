@@ -27,6 +27,8 @@ public class GAgent : MonoBehaviour
     public GAction currentAction;
     SubGoal currentGoal;
 
+    public int sightRadius = 200;
+
     public float hunger = 0;
     public float energy = 100;
     public float thirst = 0;
@@ -83,7 +85,7 @@ public class GAgent : MonoBehaviour
         {
             float distanceToTarget =
                 Vector3.Distance(currentAction.target.transform.position, this.transform.position);
-             if (currentAction.agent.hasPath && distanceToTarget < 3f)
+            if (currentAction.agent.hasPath && distanceToTarget < 5f)
             {
                 if (!invoked)
                 {
@@ -129,6 +131,30 @@ public class GAgent : MonoBehaviour
                 if (currentAction.target == null && currentAction.targetTag != "")
                 {
                     currentAction.target = GameObject.FindWithTag(currentAction.targetTag);
+
+                    //Collider[] hitColliders = Physics.OverlapSphere(this.transform.position, sightRadius);
+                    //Collider closestTarget = null;
+                    //float closestDistance = Mathf.Infinity;
+
+                    //foreach (Collider hitCollider in hitColliders)
+                    //{
+                    //    if (hitCollider.CompareTag(currentAction.targetTag))
+                    //    {
+                    //        Debug.Log("Found target: " + hitCollider.name);
+
+                    //        float distance = Vector3.Distance(transform.position, hitCollider.transform.position);
+                    //        if (distance < closestDistance)
+                    //        {
+                    //            closestDistance = distance;
+                    //            closestTarget = hitCollider;
+                    //        }
+                    //    }
+                    //}
+
+                    //if (closestTarget != null)
+                    //{
+                    //    currentAction.target = closestTarget.gameObject;
+                    //}
                 }
 
                 if (currentAction.target != null)

@@ -9,7 +9,7 @@ using UnityEngine.AI;
 public class MeshGenerator : MonoBehaviour
 {
     Mesh mesh;
-    private int MESH_SCALE = 100;
+    public int MESH_SCALE = 100;
     public GameObject[] objects;
     [SerializeField] private AnimationCurve heightCurve;
     private Vector3[] vertices;
@@ -228,7 +228,7 @@ public class MeshGenerator : MonoBehaviour
 
             clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
             clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
-            clone.AddComponent<NavMeshAgent>();
+            //clone.AddComponent<NavMeshAgent>();
         }
     }
 
@@ -251,6 +251,10 @@ public class MeshGenerator : MonoBehaviour
         }
     }
 
+    public Vector3[] GetVertices()
+    {
+        return vertices;
+    }
 
     private void UpdateMesh()
     {

@@ -827,6 +827,7 @@ GameObject:
   - component: {fileID: 7520063125710707172}
   - component: {fileID: 7454009631883005037}
   - component: {fileID: 3969569601185882291}
+  - component: {fileID: 5071025559125524097}
   m_Layer: 0
   m_Name: Stegasaurus_Yellow
   m_TagString: Untagged
@@ -843,9 +844,9 @@ Transform:
   m_GameObject: {fileID: 3354916914559454012}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3300, y: 158.79312, z: 200}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 4500, y: 11.128785, z: 4700}
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6445788884996423960}
   - {fileID: 7798880583077562006}
@@ -1066,7 +1067,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 10
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -1108,6 +1109,7 @@ MonoBehaviour:
   actions: []
   worldStates: {fileID: 3969569601185882291}
   currentAction: {fileID: 0}
+  sightRadius: 5000
   hunger: 0
   energy: 100
   thirst: 0
@@ -1134,7 +1136,7 @@ MonoBehaviour:
   preConditions: []
   afterEffects:
   - key: FoundFood
-    value: 1
+    value: 0
   agent: {fileID: 0}
   gAgent: {fileID: 0}
   agentBeliefs: {fileID: 0}
@@ -1158,7 +1160,7 @@ MonoBehaviour:
   duration: 3
   preConditions:
   - key: FoundFood
-    value: 1
+    value: 0
   afterEffects:
   - key: Eat
     value: 0
@@ -1283,6 +1285,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29a07175e69348447b61736457cd03ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!64 &5071025559125524097
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3354916914559454012}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -3620314480654512336, guid: 2baeba3921258aa4fbd7b6c1df830968, type: 3}
 --- !u!1 &3492827674512313618
 GameObject:
   m_ObjectHideFlags: 0

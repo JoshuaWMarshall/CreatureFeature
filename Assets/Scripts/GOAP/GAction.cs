@@ -22,7 +22,7 @@ public abstract class GAction : MonoBehaviour
 
     public bool running = false;
 
-    private void Start()
+    public virtual void Start()
     {
         agent = GetComponent<NavMeshAgent>();
     }

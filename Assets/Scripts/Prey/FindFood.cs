@@ -4,43 +4,45 @@ using UnityEngine;
 
 public class FindFood : GAction
 {
-   private float detectionRadius = 50f;
-   private GameObject closestFood;
-   
-   public override bool PrePerform()
-   {
-      // FindClosestFood();
-      // if (target != null)
-      // {
-      //    target = closestFood;
-      // }
+    private float detectionRadius = 500f;
+    //private GameObject closestFood;
 
-      return true;
-   }
-   public override bool PostPerform()
-   {
-      //target = null;
-      return true;
-   }
-   
-   private void FindClosestFood()
-   {
-      Collider[] colliders = Physics.OverlapBox(gAgent.transform.position, new Vector3(detectionRadius, detectionRadius, detectionRadius), Quaternion.identity);
-      closestFood = null;
-      float closestDistance = Mathf.Infinity;
+    public override bool PrePerform()
+    {
+        FindClosestFood();
 
-      foreach (Collider collider in colliders)
-      {
-         if (collider.CompareTag("Plant"))
-         {
-            float distance = Vector3.Distance(transform.position, collider.transform.position);
-            if (distance < closestDistance)
+        return true;
+    }
+    public override bool PostPerform()
+    {
+        //target = null;
+        return true;
+    }
+
+    private void FindClosestFood()
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(this.transform.position, detectionRadius);
+        Collider closestTarget = null;
+        float closestDistance = Mathf.Infinity;
+
+        foreach (Collider hitCollider in hitColliders)
+        {
+            if (hitCollider.CompareTag(this.targetTag))
             {
-               closestDistance = distance;
-               closestFood = collider.gameObject;
+                //Debug.Log("Found target: " + hitCollider.name);
+
+                float distance = Vector3.Distance(transform.position, hitCollider.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestTarget = hitCollider;
+                }
             }
-         }
-      }
-   }
-   
+        }
+
+        if (closestTarget != null)
+        {
+            this.target = closestTarget.gameObject;
+        }
+    }
 }

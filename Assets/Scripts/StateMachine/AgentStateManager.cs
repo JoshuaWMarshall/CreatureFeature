@@ -75,7 +75,7 @@ public abstract class AgentBaseState
 
 public class IdleState : AgentBaseState
 {
-    private float wanderRadius = 10f;
+    private float wanderRadius = 200f;
     private float wanderTimer = 5f;
     private float timer;
     

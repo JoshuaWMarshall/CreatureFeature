@@ -6,11 +6,11 @@ using UnityEngine;
 public class Eat : GAction
 {
     public float hungerModifier = 1;
-    
+    private float detectionRadius = 500f;
     public override bool PrePerform()
-    { 
-
-         return true;
+    {
+        FindClosestFood();
+        return true;
     }
     public override bool PostPerform()
     {
@@ -22,5 +22,32 @@ public class Eat : GAction
 
         Debug.Log("Finished Eating");
         return true;
-    }    
+    }
+
+    private void FindClosestFood()
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(this.transform.position, detectionRadius);
+        Collider closestTarget = null;
+        float closestDistance = Mathf.Infinity;
+
+        foreach (Collider hitCollider in hitColliders)
+        {
+            if (hitCollider.CompareTag(this.targetTag))
+            {
+                //Debug.Log("Found target: " + hitCollider.name);
+
+                float distance = Vector3.Distance(transform.position, hitCollider.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestTarget = hitCollider;
+                }
+            }
+        }
+
+        if (closestTarget != null)
+        {
+            this.target = closestTarget.gameObject;
+        }
+    }
 }
