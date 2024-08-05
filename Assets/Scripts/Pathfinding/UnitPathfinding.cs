@@ -15,7 +15,7 @@ public class UnitPathfinding : MonoBehaviour
     void Start()
     {
         //worldGeneration = FindObjectOfType<WorldGeneration>();
-        target = GameObject.FindGameObjectWithTag("Target").transform;
+       // target = GameObject.FindGameObjectWithTag("Target").transform;
         
         //gridGraph = worldGeneration.gridGraph;
         /* This is where we should use the mesh from our terrain

@@ -18,7 +18,7 @@ public class GridGraph
 
     void Start()
     {
-        //GenerateGrid();
+        GenerateGrid(true);
     }
 
     public GridGraph(int gridSizeX, int gridSizeZ)
