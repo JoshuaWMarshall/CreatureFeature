@@ -11,6 +11,8 @@ TagManager:
   - Plant
   - RestArea
   - Water
+  - Herbivore
+  - Carnivore
   layers:
   - Default
   - TransparentFX

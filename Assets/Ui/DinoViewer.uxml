@@ -1,0 +1,28 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SeedNum" style="position: absolute; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; font-size: 35px; left: 30px; top: 30px;" />
+    <ui:VisualElement style="flex-grow: 1; margin-top: 30px; margin-right: 30px; margin-bottom: 30px; margin-left: 30px;">
+        <ui:VisualElement style="flex-grow: 1; height: 35%;" />
+        <ui:VisualElement style="flex-grow: 1; height: 35%;" />
+        <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
+            <ui:VisualElement style="flex-grow: 1; width: 40%; flex-shrink: 0;" />
+            <ui:VisualElement name="DinoViewPanel" style="flex-grow: 1; background-color: rgb(255, 255, 255); border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                <ui:VisualElement style="flex-grow: 0; flex-direction: row;">
+                    <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Title_DinoViewPanel" style="flex-grow: 1;" />
+                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button_OpenClose" />
+                </ui:VisualElement>
+                <ui:VisualElement name="Spacer" style="flex-grow: 0; height: 5%; flex-shrink: 0;" />
+                <ui:DropdownField label="Dropdown" name="Dropdown_DinoTypeSelect" />
+                <ui:VisualElement name="Spacer" style="flex-grow: 0; height: 5%;" />
+                <ui:VisualElement name="DinoSelector" style="flex-grow: 0; flex-direction: row;">
+                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button_Previous" style="flex-shrink: 1;" />
+                    <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label_DinoName" style="flex-grow: 1; flex-shrink: 1; margin-left: 5px; margin-right: 5px;" />
+                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button_Next" style="flex-shrink: 1; flex-grow: 0;" />
+                </ui:VisualElement>
+                <ui:VisualElement name="Spacer" style="flex-grow: 1; height: 10%; flex-shrink: 0;" />
+                <ui:Slider label="Slider" high-value="100" name="Slider_Hunger" />
+                <ui:Slider label="Slider" high-value="100" name="Slider_Thirst" style="flex-shrink: 1;" />
+                <ui:Slider label="Slider" high-value="100" name="Slider_Energy" style="flex-shrink: 1;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
