@@ -21,8 +21,8 @@ public class Node2
 }
 public class AstarPathFind : MonoBehaviour
 {
-      public static int gridWidth = 1000;
-    public static int gridHeight = 1000;
+      public static int gridWidth = 5000;
+    public static int gridHeight = 5000;
     public static float cellSize = 1.0f;
     public static Node2[,] Nodes;
     //   static Texture2D tex;
