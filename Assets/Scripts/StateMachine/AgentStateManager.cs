@@ -37,8 +37,6 @@ public class AgentStateManager : MonoBehaviour
         states = herbivore.worldStates.GetStates();
 
         SwitchState(idleState); // Start in the Idle state
-        
-        //InvokeRepeating("CheckTransition", 1f, 1f);
     }
 
     void Update()
@@ -142,36 +140,6 @@ public class IdleState : AgentBaseState
         NavMesh.SamplePosition(randDirection, out navHit, dist, layermask);
         return navHit.position;
     }
-
-    private void CheckTransition()
-    {
-        //foreach (var state in states)
-        //{
-        //    if (state.Value > highestState.Value)
-        //    {
-        //        prevHighestState = highestState;
-        //        highestState = state;
-        //    }
-        //}
-
-        //if (highestState.Value <= 20)
-        //{
-        //    SwitchState(idleState);
-        //}
-        //else if (highestState.Key == "isHungry")
-        //{
-        //    SwitchState(eatingState);
-        //}
-        //else if (highestState.Key == "isTired")
-        //{
-        //    SwitchState(restingState);
-        //}
-        //else if (highestState.Key == "isThirsty")
-        //{
-        //    SwitchState(drinkingState);
-        //}
-    }
-
 }
 
 public class EatingState : AgentBaseState

@@ -131,30 +131,6 @@ public class GAgent : MonoBehaviour
                 if (currentAction.target == null && currentAction.targetTag != "")
                 {
                     currentAction.target = GameObject.FindWithTag(currentAction.targetTag);
-
-                    //Collider[] hitColliders = Physics.OverlapSphere(this.transform.position, sightRadius);
-                    //Collider closestTarget = null;
-                    //float closestDistance = Mathf.Infinity;
-
-                    //foreach (Collider hitCollider in hitColliders)
-                    //{
-                    //    if (hitCollider.CompareTag(currentAction.targetTag))
-                    //    {
-                    //        Debug.Log("Found target: " + hitCollider.name);
-
-                    //        float distance = Vector3.Distance(transform.position, hitCollider.transform.position);
-                    //        if (distance < closestDistance)
-                    //        {
-                    //            closestDistance = distance;
-                    //            closestTarget = hitCollider;
-                    //        }
-                    //    }
-                    //}
-
-                    //if (closestTarget != null)
-                    //{
-                    //    currentAction.target = closestTarget.gameObject;
-                    //}
                 }
 
                 if (currentAction.target != null)
