@@ -5,7 +5,11 @@ using UnityEngine;
 public class NPC : MonoBehaviour
 {
     public List<Vector2Int> Path = new List<Vector2Int>();
-
+    public int speed = 80;
+    public Transform objTarget;
+    private Vector2Int givenTarget;
+    public float currentDistance;
+    public int maxRange = 100;
     void Start()
     {
     }
@@ -25,12 +29,58 @@ public class NPC : MonoBehaviour
 
         if (Path.Count == 0)
         {
+            givenTarget.x = (int)objTarget.position.x;
+            givenTarget.y = (int)objTarget.position.z;
             GetComponent<Rigidbody>().velocity = Vector3.zero;
             Vector2Int newtarget = new Vector2Int();
             do
             {
-                newtarget.x = Random.Range(1, AstarPathFind.gridWidth - 1);
-                newtarget.y = Random.Range(1, AstarPathFind.gridHeight - 1);
+                currentDistance = Vector2Int.Distance(new Vector2Int((int)transform.position.x, (int)transform.position.z), givenTarget);
+                if (currentDistance <= maxRange)
+                {
+                    newtarget = givenTarget;
+                }
+                else
+                {
+                    if (givenTarget.x > ((int)transform.position.x + maxRange) && givenTarget.y > ((int)transform.position.z + maxRange))
+                    {
+                        newtarget.x = (int)transform.position.x + maxRange;
+                        newtarget.y = (int)transform.position.z + maxRange;
+                    }
+                    else if (givenTarget.x < ((int)transform.position.x - maxRange) && givenTarget.y < ((int)transform.position.z - maxRange))
+                    {
+                        newtarget.x = (int)transform.position.x - maxRange;
+                        newtarget.y = (int)transform.position.z - maxRange;
+                    }
+                    else if(givenTarget.x > ((int)transform.position.x + maxRange))
+                    {
+                        newtarget.x = (int)transform.position.x + maxRange;
+                        newtarget.y = givenTarget.y;
+                    }
+                    else if(givenTarget.x < ((int)transform.position.x - maxRange))
+                    {
+                        newtarget.x = (int)transform.position.x - maxRange;
+                        newtarget.y = givenTarget.y;
+                    }
+                    else if(givenTarget.y > ((int)transform.position.z + maxRange))
+                    {
+                        newtarget.y = (int)transform.position.y + maxRange;
+                        newtarget.x = givenTarget.x;
+                    }
+                    else if(givenTarget.y < ((int)transform.position.z - maxRange))
+                    {
+                        newtarget.y = (int)transform.position.y - maxRange;
+                        newtarget.x = givenTarget.x;
+                    }
+                   
+                    /*newtarget.x = Random.Range((int)transform.position.x, Random.Range((int)transform.position.x + 100, (int)transform.position.x - 100));
+                    newtarget.x = Mathf.Clamp(newtarget.x, 0,AstarPathFind.gridWidth);
+                    newtarget.y = Random.Range((int)transform.position.z, Random.Range((int)transform.position.z + 100, (int)transform.position.z - 100));
+                    newtarget.y = Mathf.Clamp(newtarget.y, 0,AstarPathFind.gridHeight);*/
+                    
+                    
+                }
+             
             } while (AstarPathFind.GetNode(newtarget).Wall);
 
             Path = AstarPathFind.FindPath(
@@ -43,7 +93,7 @@ public class NPC : MonoBehaviour
                 Path[Path.Count - 1].x + AstarPathFind.cellSize * 0.5f, 
                 0.5f, 
                 Path[Path.Count - 1].y + AstarPathFind.cellSize * 0.5f);
-            GetComponent<Rigidbody>().velocity = (target - transform.position).normalized * 80.0f;
+            GetComponent<Rigidbody>().velocity = (target - transform.position).normalized * speed;
             // Calculate the direction to the target
             Vector3 direction = (target - transform.position).normalized;
 

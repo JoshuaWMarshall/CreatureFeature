@@ -21,8 +21,8 @@ public class Node2
 }
 public class AstarPathFind : MonoBehaviour
 {
-      public static int gridWidth = 16;
-    public static int gridHeight = 16;
+      public static int gridWidth = 1000;
+    public static int gridHeight = 1000;
     public static float cellSize = 1.0f;
     public static Node2[,] Nodes;
     //   static Texture2D tex;
@@ -32,9 +32,9 @@ public class AstarPathFind : MonoBehaviour
     void Start()
     {
         Nodes = new Node2[gridHeight, gridWidth];
-        for (int z = 0; z < gridHeight; ++z)
+        for (int z = 0; z < gridHeight; z++)
         {
-            for (int x = 0; x < gridWidth; ++x)
+            for (int x = 0; x < gridWidth; x++)
             {
                     Nodes[gridHeight - z - 1, x] = new Node2();
                     Nodes[gridHeight - z - 1, x].Wall = false;
@@ -67,11 +67,11 @@ public class AstarPathFind : MonoBehaviour
             new Vector2Int(-1, 0),
             new Vector2Int(1, 0),
             new Vector2Int(0, 1),
-            new Vector2Int(0, -1)
-            //new Vector2Int(-1, -1),
-            //new Vector2Int(1, 1),
-            //new Vector2Int(-1, 1),
-            //new Vector2Int(1, -1)
+            new Vector2Int(0, -1),
+            new Vector2Int(-1, -1),
+            new Vector2Int(1, 1),
+            new Vector2Int(-1, 1),
+            new Vector2Int(1, -1)
         };
 
         for (int y = 0; y < gridHeight; ++y)
