@@ -10,18 +10,20 @@
                     <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Title_DinoViewPanel" style="flex-grow: 1;" />
                     <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button_OpenClose" />
                 </ui:VisualElement>
-                <ui:VisualElement name="Spacer" style="flex-grow: 0; height: 5%; flex-shrink: 0;" />
-                <ui:DropdownField label="Dropdown" name="Dropdown_DinoTypeSelect" />
-                <ui:VisualElement name="Spacer" style="flex-grow: 0; height: 5%;" />
-                <ui:VisualElement name="DinoSelector" style="flex-grow: 0; flex-direction: row;">
-                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button_Previous" style="flex-shrink: 1;" />
-                    <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label_DinoName" style="flex-grow: 1; flex-shrink: 1; margin-left: 5px; margin-right: 5px;" />
-                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button_Next" style="flex-shrink: 1; flex-grow: 0;" />
+                <ui:VisualElement name="Contents" style="flex-grow: 1;">
+                    <ui:VisualElement name="Spacer" style="flex-grow: 0; height: 5%; flex-shrink: 0;" />
+                    <ui:DropdownField label="Dropdown" name="Dropdown_DinoTypeSelect" />
+                    <ui:VisualElement name="Spacer" style="flex-grow: 0; height: 5%;" />
+                    <ui:VisualElement name="DinoSelector" style="flex-grow: 0; flex-direction: row;">
+                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button_Previous" style="flex-shrink: 1;" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label_DinoName" style="flex-grow: 1; flex-shrink: 1; margin-left: 5px; margin-right: 5px;" />
+                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button_Next" style="flex-shrink: 1; flex-grow: 0;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="Spacer" style="flex-grow: 1; height: 10%; flex-shrink: 0;" />
+                    <ui:Slider label="Slider" high-value="100" name="Slider_Hunger" />
+                    <ui:Slider label="Slider" high-value="100" name="Slider_Thirst" style="flex-shrink: 1;" />
+                    <ui:Slider label="Slider" high-value="100" name="Slider_Energy" style="flex-shrink: 1;" />
                 </ui:VisualElement>
-                <ui:VisualElement name="Spacer" style="flex-grow: 1; height: 10%; flex-shrink: 0;" />
-                <ui:Slider label="Slider" high-value="100" name="Slider_Hunger" />
-                <ui:Slider label="Slider" high-value="100" name="Slider_Thirst" style="flex-shrink: 1;" />
-                <ui:Slider label="Slider" high-value="100" name="Slider_Energy" style="flex-shrink: 1;" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

@@ -85,8 +85,8 @@ public class CameraOrbit : MonoBehaviour
             if (pos.x < 380 * dpiScale && Screen.height - pos.y < 250 * dpiScale) return;
 
             // Hide cursor if necessary
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
+            //Cursor.visible = false;
+            //Cursor.lockState = CursorLockMode.Locked;
 
             x += mouseDelta.x * xSpeed * 0.02f;
             y -= mouseDelta.y * ySpeed * 0.02f;
@@ -100,8 +100,8 @@ public class CameraOrbit : MonoBehaviour
         else
         {
             // Show cursor if necessary
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
+            //Cursor.visible = true;
+            //Cursor.lockState = CursorLockMode.None;
         }
 
         if (Math.Abs(prevDistance - distance) > 0.001f)

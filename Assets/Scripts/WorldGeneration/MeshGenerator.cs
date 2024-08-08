@@ -36,6 +36,10 @@ public class MeshGenerator : MonoBehaviour
 
     public NavMeshSurface navMeshSurface;
 
+    public GameObject stegosaurusContainer;
+    public GameObject velociraptorContainer;
+    public GameObject embelishmentsContainer;
+
     public GameObject[] dinos;
     public int maxDinos;
 
@@ -202,7 +206,7 @@ public class MeshGenerator : MonoBehaviour
                     {
                         GameObject objectToSpawn = objects[Random.Range(0, objects.Length)];
                         var spawnAboveTerrainBy = noiseHeight * 2;
-                        GameObject clone = Instantiate(objectToSpawn, new Vector3(mesh.vertices[i].x * MESH_SCALE, spawnAboveTerrainBy, mesh.vertices[i].z * MESH_SCALE), Quaternion.identity);
+                        GameObject clone = Instantiate(objectToSpawn, new Vector3(mesh.vertices[i].x * MESH_SCALE, spawnAboveTerrainBy, mesh.vertices[i].z * MESH_SCALE), Quaternion.identity, embelishmentsContainer.transform);
 
                         clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
                         clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
@@ -216,7 +220,8 @@ public class MeshGenerator : MonoBehaviour
         for (int i = 0; i < maxDinos; i++)
         {
             Vector3 worldPt = transform.TransformPoint(mesh.vertices[Random.Range(0, vertices.Length)]);
-            GameObject objectToSpawn = dinos[Random.Range(0, dinos.Length)];
+            int randomInt = Random.Range(0, dinos.Length);
+            GameObject objectToSpawn = dinos[randomInt];
 
             NavMeshHit closestHit;
             if (NavMesh.SamplePosition(worldPt, out closestHit, 500, 1))
@@ -224,11 +229,22 @@ public class MeshGenerator : MonoBehaviour
                 objectToSpawn.transform.position = closestHit.position;
 
             }
-            GameObject clone = Instantiate(objectToSpawn, objectToSpawn.transform.position, Quaternion.identity);
 
-            clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
-            clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
-            //clone.AddComponent<NavMeshAgent>();
+
+            if (randomInt == 0)
+            {
+                GameObject clone = Instantiate(objectToSpawn, objectToSpawn.transform.position, Quaternion.identity, stegosaurusContainer.transform);
+                clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
+                clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
+            }
+            else if(randomInt == 1)
+            {
+                GameObject clone = Instantiate(objectToSpawn, objectToSpawn.transform.position, Quaternion.identity, velociraptorContainer.transform);
+                clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
+                clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
+            }
+
+
         }
     }
 

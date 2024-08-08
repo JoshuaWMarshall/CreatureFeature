@@ -398,9 +398,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3096028984558014023, guid: ea7223548caf1984193a4970bcc4317b, type: 3}
+      propertyPath: targetTag
+      value: Herbivore
+      objectReference: {fileID: 0}
     - target: {fileID: 3354916914559454012, guid: ea7223548caf1984193a4970bcc4317b, type: 3}
       propertyPath: m_Name
       value: Stegasaurus_Yellow
+      objectReference: {fileID: 0}
+    - target: {fileID: 3354916914559454012, guid: ea7223548caf1984193a4970bcc4317b, type: 3}
+      propertyPath: m_TagString
+      value: Herbivore
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
