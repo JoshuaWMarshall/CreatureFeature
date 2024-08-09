@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,11 +15,10 @@ public class NPC : MonoBehaviour
     {
     }
 
-    void Update()
+    private void FixedUpdate()
     {
-        YRayCast();
-        Vector2Int pos = new Vector2Int((int)transform.position.x, (int)transform.position.z);
-
+       
+        
         for(int i=0;i<Path.Count-1;++i)
         {
             Debug.DrawLine(
@@ -33,59 +33,37 @@ public class NPC : MonoBehaviour
             givenTarget.y = (int)objTarget.position.z;
             GetComponent<Rigidbody>().velocity = Vector3.zero;
             Vector2Int newtarget = new Vector2Int();
-            do
+            currentDistance = Vector2Int.Distance(new Vector2Int((int)transform.position.x, (int)transform.position.z), givenTarget);
+            if (currentDistance > 1)
             {
-                currentDistance = Vector2Int.Distance(new Vector2Int((int)transform.position.x, (int)transform.position.z), givenTarget);
-                if (currentDistance <= maxRange)
+                do
                 {
-                    newtarget = givenTarget;
-                }
-                else
-                {
-                    if (givenTarget.x > ((int)transform.position.x + maxRange) && givenTarget.y > ((int)transform.position.z + maxRange))
+                    if (currentDistance <= maxRange)
                     {
-                        newtarget.x = (int)transform.position.x + maxRange;
-                        newtarget.y = (int)transform.position.z + maxRange;
+                        newtarget = givenTarget;
                     }
-                    else if (givenTarget.x < ((int)transform.position.x - maxRange) && givenTarget.y < ((int)transform.position.z - maxRange))
+                    else
                     {
-                        newtarget.x = (int)transform.position.x - maxRange;
-                        newtarget.y = (int)transform.position.z - maxRange;
-                    }
-                    else if(givenTarget.x > ((int)transform.position.x + maxRange))
-                    {
-                        newtarget.x = (int)transform.position.x + maxRange;
-                        newtarget.y = givenTarget.y;
-                    }
-                    else if(givenTarget.x < ((int)transform.position.x - maxRange))
-                    {
-                        newtarget.x = (int)transform.position.x - maxRange;
-                        newtarget.y = givenTarget.y;
-                    }
-                    else if(givenTarget.y > ((int)transform.position.z + maxRange))
-                    {
-                        newtarget.y = (int)transform.position.y + maxRange;
-                        newtarget.x = givenTarget.x;
-                    }
-                    else if(givenTarget.y < ((int)transform.position.z - maxRange))
-                    {
-                        newtarget.y = (int)transform.position.y - maxRange;
-                        newtarget.x = givenTarget.x;
-                    }
-                   
-                    /*newtarget.x = Random.Range((int)transform.position.x, Random.Range((int)transform.position.x + 100, (int)transform.position.x - 100));
-                    newtarget.x = Mathf.Clamp(newtarget.x, 0,AstarPathFind.gridWidth);
-                    newtarget.y = Random.Range((int)transform.position.z, Random.Range((int)transform.position.z + 100, (int)transform.position.z - 100));
-                    newtarget.y = Mathf.Clamp(newtarget.y, 0,AstarPathFind.gridHeight);*/
-                    
-                    
-                }
-             
-            } while (AstarPathFind.GetNode(newtarget).Wall);
+                        int deltaX = givenTarget.x - (int)transform.position.x;
+                        int deltaY = givenTarget.y - (int)transform.position.z;
 
-            Path = AstarPathFind.FindPath(
-                new Vector2Int((int)transform.position.x, (int)transform.position.z),
-                newtarget);
+                        int newTargetX = (Math.Abs(deltaX) > maxRange) ? (int)transform.position.x + Math.Sign(deltaX) * maxRange : givenTarget.x;
+                        int newTargetY = (Math.Abs(deltaY) > maxRange) ? (int)transform.position.z + Math.Sign(deltaY) * maxRange : givenTarget.y;
+
+                        newtarget = new Vector2Int(newTargetX, newTargetY);
+                    }
+                    /*newtarget.x = Random.Range((int)transform.position.x, Random.Range((int)transform.position.x + 100, (int)transform.position.x - 100));
+                       newtarget.x = Mathf.Clamp(newtarget.x, 0,AstarPathFind.gridWidth);
+                       newtarget.y = Random.Range((int)transform.position.z, Random.Range((int)transform.position.z + 100, (int)transform.position.z - 100));
+                       newtarget.y = Mathf.Clamp(newtarget.y, 0,AstarPathFind.gridHeight);*/
+             
+                } while (AstarPathFind.GetNode(newtarget).Wall);
+
+                Path = AstarPathFind.FindPath(
+                    new Vector2Int((int)transform.position.x, (int)transform.position.z),
+                    newtarget);
+            }
+           
         }
         if (Path.Count != 0)
         {
@@ -113,22 +91,27 @@ public class NPC : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        YRayCast();
+    }
+
     public void YRayCast()
     {
         RaycastHit hit;
-        //Debug.Log("ray");
+        int layerMask = ~(1 << 14); // Ignore layer 14
         Vector3 raySpot = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        float rayY = 100;
+        float rayY = transform.position.y + 100;
         raySpot.y = rayY;
-        
-        if(Physics.Raycast(raySpot, Vector3.down, out hit, Mathf.Infinity))
+
+        if (Physics.Raycast(raySpot, Vector3.down, out hit, Mathf.Infinity, layerMask))
         {
             Debug.Log("Raycast hit " + hit.point);
             transform.position = new Vector3(transform.position.x, hit.point.y, transform.position.z);
         }
         else
         {
-            Debug.Log("not work");
+            Debug.Log("Raycast did not hit or hit a layer that should be ignored.");
         }
     }
 
