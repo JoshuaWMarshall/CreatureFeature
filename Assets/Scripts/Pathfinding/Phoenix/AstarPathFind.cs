@@ -25,26 +25,33 @@ public class AstarPathFind : MonoBehaviour
     public static int gridHeight = 5000;
     public static float cellSize = 1.0f;
     public static Node2[,] Nodes;
-    //   static Texture2D tex;
-    
+    public GameObject[] rocks;
+    public Transform[] nodesThatAreWalls;
     
     // Start is called before the first frame update
     void Start()
     {
+        
         Nodes = new Node2[gridHeight, gridWidth];
         for (int z = 0; z < gridHeight; z++)
         {
             for (int x = 0; x < gridWidth; x++)
             {
-                    Nodes[gridHeight - z - 1, x] = new Node2();
-                    Nodes[gridHeight - z - 1, x].Wall = false;
+                Nodes[gridHeight - z - 1, x] = new Node2();
+                Nodes[gridHeight - z - 1, x].Wall = false;
+
             }
         }
+        // Find all game objects with the tag "rocks"
+        StartCoroutine(Wait5());
 
     }
+
+    
     // Update is called once per frame
     void Update()
     {
+        /*
         for (int y = 0; y <= gridHeight; ++y)
         {
             Debug.DrawLine(new Vector3(0, 0.1f, y), new Vector3(gridWidth, 0.1f, y));
@@ -53,7 +60,8 @@ public class AstarPathFind : MonoBehaviour
         {
             Debug.DrawLine(new Vector3(x, 0.1f, 0), new Vector3(x, 0.1f, gridHeight));
         }
-
+        */
+        
     }
 
     public static Node2 GetNode(Vector2Int pos)
@@ -161,6 +169,30 @@ public class AstarPathFind : MonoBehaviour
         // Return empty path
         return new List<Vector2Int>();
 
+    }
+
+    IEnumerator Wait5()
+    {
+        yield return new WaitForSeconds(5);
+        rocks = GameObject.FindGameObjectsWithTag("Rocks");
+        foreach (GameObject i in rocks)
+        {
+            int xIndex = Mathf.RoundToInt(i.transform.position.x);
+            int zIndex = Mathf.RoundToInt(i.transform.position.z);
+
+            // Check if the indices are within the bounds of the Nodes array
+            if (zIndex > 0 && zIndex < 5000 && xIndex > 0 && xIndex < 5000)
+            {
+                GetNode(new Vector2Int(xIndex, zIndex)).Wall = true;
+               // Debug.Log(xIndex +" ," + zIndex );
+            }
+            else
+            {
+                Debug.LogError("Index out of bounds: (" + xIndex + ", " + zIndex + ") Phoenix Made Error");
+                Destroy(i);
+            }
+        }
+        Debug.Log("Done");
     }
 }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class NPC : MonoBehaviour
 {
@@ -11,9 +12,8 @@ public class NPC : MonoBehaviour
     private Vector2Int givenTarget;
     public float currentDistance;
     public int maxRange = 100;
-    void Start()
-    {
-    }
+    private bool isRandom = false;
+
 
     private void FixedUpdate()
     {
@@ -27,7 +27,7 @@ public class NPC : MonoBehaviour
                 Color.green);
         }
 
-        if (Path.Count == 0 && objTarget != null)
+        if (Path.Count == 0 && objTarget != null && isRandom == false)
         {
             givenTarget.x = (int)objTarget.position.x;
             givenTarget.y = (int)objTarget.position.z;
@@ -42,7 +42,7 @@ public class NPC : MonoBehaviour
                     {
                         newtarget = givenTarget;
                     }
-                    else
+                    else if(currentDistance > maxRange)
                     {
                         int deltaX = givenTarget.x - (int)transform.position.x;
                         int deltaY = givenTarget.y - (int)transform.position.z;
@@ -52,10 +52,7 @@ public class NPC : MonoBehaviour
 
                         newtarget = new Vector2Int(newTargetX, newTargetY);
                     }
-                    /*newtarget.x = Random.Range((int)transform.position.x, Random.Range((int)transform.position.x + 100, (int)transform.position.x - 100));
-                       newtarget.x = Mathf.Clamp(newtarget.x, 0,AstarPathFind.gridWidth);
-                       newtarget.y = Random.Range((int)transform.position.z, Random.Range((int)transform.position.z + 100, (int)transform.position.z - 100));
-                       newtarget.y = Mathf.Clamp(newtarget.y, 0,AstarPathFind.gridHeight);*/
+                    
              
                 } while (AstarPathFind.GetNode(newtarget).Wall);
 
@@ -65,29 +62,70 @@ public class NPC : MonoBehaviour
             }
            
         }
+        else if (objTarget == null && Path.Count == 0)
+        {
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+             Vector2Int newtarget = new Vector2Int();
+             isRandom = true;
+            do
+            {
+
+                // Calculate valid range for x
+                int minX = Mathf.Max(0, (int)transform.position.x - 100);
+                int maxX = Mathf.Min(AstarPathFind.gridWidth, (int)transform.position.x + 100);
+                newtarget.x = Random.Range(minX, maxX);
+
+                // Calculate valid range for y
+                int minY = Mathf.Max(0, (int)transform.position.z - 100);
+                int maxY = Mathf.Min(AstarPathFind.gridHeight, (int)transform.position.z + 100);
+                newtarget.y = Random.Range(minY, maxY);
+            }while (AstarPathFind.GetNode(newtarget).Wall);
+
+            Path = AstarPathFind.FindPath(
+                new Vector2Int((int)transform.position.x, (int)transform.position.z),
+                newtarget);
+          
+        }
         if (Path.Count != 0)
         {
-            Vector3 target = new Vector3(
-                Path[Path.Count - 1].x + AstarPathFind.cellSize * 0.5f, 
-                0.5f, 
-                Path[Path.Count - 1].y + AstarPathFind.cellSize * 0.5f);
-            GetComponent<Rigidbody>().velocity = (target - transform.position).normalized * speed;
-            // Calculate the direction to the target
-            Vector3 direction = (target - transform.position).normalized;
-
-            // Calculate the rotation angle in degrees
-            float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-
-            // Rotate the game object to face the target direction
-            Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
-
-            // Smoothly rotate the game object towards the target direction using slerp
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5);
-
-            if (Mathf.Abs(transform.position.x - target.x) < 0.6f && Mathf.Abs(transform.position.z - target.z) < 0.6f)
+            if (isRandom == true && objTarget != null)
             {
-                Path.RemoveAt(Path.Count - 1);
+                for (int i = Path.Count - 1; i >= 0; i--)
+                {
+                    Path.RemoveAt(i);
+                    if (i == 0) // Stop the loop after removing the last element
+                    {
+                        break;
+                    }
+                }
+
+                isRandom = false;
             }
+            else
+            {
+                Vector3 target = new Vector3(
+                    Path[Path.Count - 1].x + AstarPathFind.cellSize * 0.5f, 
+                    0.5f, 
+                    Path[Path.Count - 1].y + AstarPathFind.cellSize * 0.5f);
+                GetComponent<Rigidbody>().velocity = (target - transform.position).normalized * speed;
+                // Calculate the direction to the target
+                Vector3 direction = (target - transform.position).normalized;
+
+                // Calculate the rotation angle in degrees
+                float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+
+                // Rotate the game object to face the target direction
+                Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
+
+                // Smoothly rotate the game object towards the target direction using slerp
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5);
+
+                if (Mathf.Abs(transform.position.x - target.x) < 0.6f && Mathf.Abs(transform.position.z - target.z) < 0.6f)
+                {
+                    Path.RemoveAt(Path.Count - 1);
+                }
+            }
+           
         }
     }
 
@@ -106,7 +144,7 @@ public class NPC : MonoBehaviour
 
         if (Physics.Raycast(raySpot, Vector3.down, out hit, Mathf.Infinity, layerMask))
         {
-            Debug.Log("Raycast hit " + hit.point);
+          //  Debug.Log("Raycast hit " + hit.point);
             transform.position = new Vector3(transform.position.x, hit.point.y, transform.position.z);
         }
         else
