@@ -34,8 +34,6 @@ public class MeshGenerator : MonoBehaviour
     public GameObject waterMeshPrefab;
     public float waterHeight = 100f;
 
-    public NavMeshSurface navMeshSurface;
-
     public GameObject stegosaurusContainer;
     public GameObject velociraptorContainer;
     public GameObject embelishmentsContainer;
@@ -51,9 +49,6 @@ public class MeshGenerator : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         CreateNewMap();
-
-       navMeshSurface = gameObject.GetComponent<NavMeshSurface>();
-       navMeshSurface.BuildNavMesh();
 
         MapEmbellishments();
     }
@@ -219,16 +214,16 @@ public class MeshGenerator : MonoBehaviour
 
         for (int i = 0; i < maxDinos; i++)
         {
-            Vector3 worldPt = transform.TransformPoint(mesh.vertices[Random.Range(0, vertices.Length)]);
+            Vector3 worldPt = transform.TransformPoint(GetRandomInnerVertex());
             int randomInt = Random.Range(0, dinos.Length);
             GameObject objectToSpawn = dinos[randomInt];
-
-            NavMeshHit closestHit;
-            if (NavMesh.SamplePosition(worldPt, out closestHit, 500, 1))
-            {
-                objectToSpawn.transform.position = closestHit.position;
-
-            }
+            objectToSpawn.transform.position = worldPt + new Vector3(0, 100, 0);
+            // NavMeshHit closestHit;
+            // if (NavMesh.SamplePosition(worldPt, out closestHit, 500, 1))
+            // {
+            //     objectToSpawn.transform.position = closestHit.position;
+            //
+            // }
 
 
             if (randomInt == 0)
@@ -249,7 +244,22 @@ public class MeshGenerator : MonoBehaviour
 
         }
     }
+    
+    private Vector3 GetRandomInnerVertex()
+    {
+        // Ensure we are only working with inner vertices by avoiding the edges
+        int xMin = 1;
+        int xMax = xSize - 1;
+        int zMin = 1;
+        int zMax = zSize - 1;
 
+        int x = Random.Range(xMin, xMax);
+        int z = Random.Range(zMin, zMax);
+
+        int vertexIndex = z * (xSize + 1) + x;
+        return vertices[vertexIndex];
+    }
+    
     private void CreateWaterMesh()
     {
         if (waterMeshPrefab != null)

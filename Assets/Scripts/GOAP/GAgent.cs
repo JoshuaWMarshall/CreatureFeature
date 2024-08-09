@@ -85,7 +85,7 @@ public class GAgent : MonoBehaviour
         {
             float distanceToTarget =
                 Vector3.Distance(currentAction.target.transform.position, this.transform.position);
-            if (currentAction.agent.hasPath && distanceToTarget < 5f)
+            if (currentAction.npc.Path.Count > 0 && distanceToTarget < 5f)
             {
                 if (!invoked)
                 {
@@ -136,7 +136,7 @@ public class GAgent : MonoBehaviour
                 if (currentAction.target != null)
                 {
                     currentAction.running = true;
-                    currentAction.agent.SetDestination(currentAction.target.transform.position);
+                    currentAction.npc.SetDestination(currentAction.target.transform);
                 }
             }
             else

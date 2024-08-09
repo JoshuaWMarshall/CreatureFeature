@@ -13,7 +13,7 @@ public abstract class GAction : MonoBehaviour
     public float duration = 0;
     public WorldState[] preConditions;
     public WorldState[] afterEffects;
-    public NavMeshAgent agent;
+    public NPC npc;
     public GAgent gAgent;
     public Dictionary<string, int> preconditions;
     public Dictionary<string, int> effects;
@@ -24,7 +24,7 @@ public abstract class GAction : MonoBehaviour
 
     public virtual void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
+        npc = GetComponent<NPC>();
     }
 
     public GAction()
@@ -35,7 +35,6 @@ public abstract class GAction : MonoBehaviour
 
     public void Awake()
     {
-        agent = this.gameObject.GetComponent<NavMeshAgent>();
         if (preConditions != null)
         {
             foreach (WorldState w in preConditions)

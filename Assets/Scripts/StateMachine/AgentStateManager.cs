@@ -95,12 +95,12 @@ public class IdleState : AgentBaseState
     {
         timer += Time.deltaTime;
 
-        if (timer >= wanderTimer)
-        {
-            Vector3 newPos = RandomNavSphere(stateManager.transform.position, wanderRadius, 13);
-            stateManager.navMeshAgent.SetDestination(newPos);
-            timer = 0;
-        }
+        // if (timer >= wanderTimer)
+        // {
+        //     Vector3 newPos = RandomNavSphere(stateManager.transform.position, wanderRadius, 13);
+        //     stateManager.navMeshAgent.SetDestination(newPos);
+        //     timer = 0;
+        // }
 
         // transitions
         if (stateManager.states["isHungry"] >= 50)
