@@ -1,26 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 public class DinoViewerPresenter : MonoBehaviour
 {
+    private UiController uiController;
+    public List<GameObject> displayedDinos;
+    public List<GameObject> stegosaurus;
+    public List<GameObject> velociraptor;
+
     private int currentIndex = 0;
-    private GameObject stegosaurusContainer;
-    private GameObject velociraptorContainer;
-    private GameObject[] stegosaurus;
-    private GameObject[] velociraptor;
-
-    private GameObject[] displayedDinos;
-    private GAgent currentDino;
-
+    public CameraOrbit cameraOrbit;
+    
     //Panel
-    [SerializeField] public UIDocument uIDocument = null;
-    private VisualElement root;
     private VisualElement contents;
 
     //Text
-    private Label seedNumber;
-    private Label title;
+    public Label seedNumber;
+    public Label currentAction;
     private Label dinoName;
 
     //Drop down
@@ -42,93 +41,64 @@ public class DinoViewerPresenter : MonoBehaviour
     public Action NextDinoAction { set => nextButton.clicked += value; }
 
     //Sliders
-    private Slider hungerSlider;
-    private Slider thirstSlider;
-    private Slider energySlider;
+    public Slider hungerSlider;
+    public Slider thirstSlider;
+    public Slider energySlider;
 
-    public DinoViewerPresenter()
+    private VisualElement hungerSliderDragger;
+    private VisualElement thirstSliderDragger;
+    private VisualElement energySliderDragger;
+
+    private VisualElement hungerSliderFillBar;
+    private VisualElement thirstSliderFillBar;
+    private VisualElement energySliderFillBar;
+
+    public DinoViewerPresenter(VisualElement root, UiController uiController)
     {
         contents = root.Q<VisualElement>("Contents");
         seedNumber = root.Q<Label>("Label_SeedNum");
-        title = root.Q<Label>("Label_DinoViewPanel");
+        currentAction = root.Q<Label>("Label_CurrentAction");
         dinoName = root.Q<Label>("Label_DinoName");
+        
         openClosButton = root.Q<Button>("Button_OpenClose");
         previousButton = root.Q<Button>("Button_Previous");
         nextButton = root.Q<Button>("Button_Next");
+        
         dinoTypeSelect = root.Q<DropdownField>("Dropdown_DinoTypeSelect");
+        
         hungerSlider = root.Q<Slider>("Slider_Hunger");
         thirstSlider = root.Q<Slider>("Slider_Thirst");
         energySlider = root.Q<Slider>("Slider_Energy");
 
+        hungerSliderDragger = hungerSlider.Q<VisualElement>("unity-dragger");
+        thirstSliderDragger = thirstSlider.Q<VisualElement>("unity-dragger");
+        energySliderDragger = energySlider.Q<VisualElement>("unity-dragger");
+        
+        AddFillBars();
+        
         dinoTypeSelect.choices = dinoTypes;
-        dinoTypeSelect.RegisterValueChangedCallback((value) => SetDinoType(value.newValue));
         dinoTypeSelect.index = 0;
+        dinoTypeSelect.RegisterValueChangedCallback((value) => SetDinoType(value.newValue));
+
 
         OpenCloseAction = () => ToggleDinoViewer();
         PreviousDinoAction = () => LoadDinoStats(-1);
         NextDinoAction = () => LoadDinoStats(1);
 
-        hungerSlider.RegisterValueChangedCallback((value) => SetDinoHunger(value.newValue));
-        thirstSlider.RegisterValueChangedCallback((value) => SetDinoThirst(value.newValue));
-        energySlider.RegisterValueChangedCallback((value) => SetDinoEnergy(value.newValue));
+        //hungerSlider.RegisterValueChangedCallback((value) => SetDinoHunger(value.newValue));
+        //thirstSlider.RegisterValueChangedCallback((value) => SetDinoThirst(value.newValue));
+        //energySlider.RegisterValueChangedCallback((value) => SetDinoEnergy(value.newValue));
 
-        title.text = "Dino Viewer 3000 ";
-        dinoName.text = "Stego-doyouthinhkhesawus";
-
-        //stegosaurusContainer = stegoContainer;
-        //velociraptorContainer = raptorContainer;
-
-        FindDinosInScene();
-        displayedDinos = stegosaurus;
-        LoadDinoStats(0);
-
+        this.uiController = uiController;
     }
-
-    private void Awake()
-    {
-        root = GetComponent<UIDocument>().rootVisualElement;
-    }
-
-    private void LateUpdate()
-    {
-        if ((currentDino != null))
-        {
-            SetDinoEnergy(currentDino.energy);
-            SetDinoHunger(currentDino.hunger);
-            SetDinoThirst(currentDino.thirst);
-        }
-    }
-
-    private void FindDinosInScene()
-    {
-        stegosaurus = new GameObject[stegosaurusContainer.transform.childCount];
-        velociraptor = new GameObject[velociraptorContainer.transform.childCount];
-
-        int i = 0;
-
-        foreach (Transform child in stegosaurusContainer.transform)
-        {
-            stegosaurus[i] = child.gameObject;
-            i += 1;
-        }
-
-        i = 0;
-
-        foreach (Transform child in velociraptorContainer.transform)
-        {
-            velociraptor[i] = child.gameObject;
-            i += 1;
-        }
-    }
-
+    
     private void ToggleDinoViewer()
     {
         bool enabled = contents.IsDisplayFlex();
 
         contents.Display(!enabled);
     }
-
-
+    
     private void SetDinoType(string type)
     {
         switch (type)
@@ -140,42 +110,66 @@ public class DinoViewerPresenter : MonoBehaviour
                 displayedDinos = velociraptor;
                 break;
         }
-
+        ResetList();
         LoadDinoStats(0);
     }
 
-    private void SetDinoHunger(float hunger)
+    private void AddFillBars()
     {
-
+        hungerSliderFillBar = new VisualElement();
+        hungerSliderDragger.Add(hungerSliderFillBar);
+        hungerSliderFillBar.name = "FillBar";
+        hungerSliderFillBar.AddToClassList("fillBar");
+        
+        thirstSliderFillBar = new VisualElement();
+        thirstSliderDragger.Add(thirstSliderFillBar);
+        thirstSliderFillBar.name = "FillBar";
+        thirstSliderFillBar.AddToClassList("fillBar");
+        
+        energySliderFillBar = new VisualElement();
+        energySliderDragger.Add(energySliderFillBar);
+        energySliderFillBar.name = "FillBar";
+        energySliderFillBar.AddToClassList("fillBar");
     }
-
-    private void SetDinoThirst(float hunger)
+    
+    public void LoadDinoStats(int indentBy)
     {
+        Indent(indentBy);
 
-    }
-
-    private void SetDinoEnergy(float hunger)
-    {
-
-    }
-
-    private void LoadDinoStats(int indentBy)
-    {
-        if (displayedDinos == null)
-        {
-            return;
-        }
-
-        if (displayedDinos.Length + indentBy < 0 || displayedDinos.Length + indentBy > displayedDinos.Length)
-        {
-            return;
-        }
-
-        currentDino = displayedDinos[currentIndex + indentBy].GetComponent<GAgent>();
-
+        GAgent currentDino = CurrentDino();
+        uiController.currentDino = currentDino;
+        
+        cameraOrbit.target = displayedDinos[currentIndex];
+        cameraOrbit.UpdateCameraPosition();
+        
+        currentAction.text = "Current Action: " + currentDino.currentAction;
+        dinoName.text = "Dino Name :" + currentDino.name;
         hungerSlider.value = (float)currentDino.hunger;
         thirstSlider.value = (float)currentDino.thirst;
         energySlider.value = (float)currentDino.energy;
-        
+    }
+
+    public GAgent CurrentDino()
+    {
+        if (displayedDinos.Count == 0)
+        {
+            return null;
+        }
+        return displayedDinos[currentIndex].GetComponent<GAgent>();
+    }
+
+    public void Indent(int step)
+    {
+        if (displayedDinos.Count == 0)
+        {
+            return;
+        }
+
+        currentIndex = (currentIndex + step + displayedDinos.Count) % displayedDinos.Count;
+    }
+
+    public void ResetList()
+    {
+        currentIndex = 0;
     }
 }

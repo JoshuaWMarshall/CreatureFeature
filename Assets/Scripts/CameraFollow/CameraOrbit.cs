@@ -1,7 +1,3 @@
-//  A simple Unity C# script for orbital movement around a target gameobject
-//  Author: Ashkan Ashtiani
-//  Gist on Github: https://gist.github.com/3dln/c16d000b174f7ccf6df9a1cb0cef7f80
-
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -73,7 +69,7 @@ public class CameraOrbit : MonoBehaviour
         distance -= zoomAction.ReadValue<float>() * 2;
         distance = Mathf.Clamp(distance, minDistance, maxDistance);
 
-        if (target && (leftClickAction.ReadValue<float>() > 0 || rightClickAction.ReadValue<float>() > 0))
+        if (target && rightClickAction.ReadValue<float>() > 0)
         {
             Vector2 mouseDelta = mouseAction.ReadValue<Vector2>();
             var dpiScale = 1f;
@@ -83,11 +79,7 @@ public class CameraOrbit : MonoBehaviour
 
             var pos = Mouse.current.position.ReadValue();
             if (pos.x < 380 * dpiScale && Screen.height - pos.y < 250 * dpiScale) return;
-
-            // Hide cursor if necessary
-            //Cursor.visible = false;
-            //Cursor.lockState = CursorLockMode.Locked;
-
+            
             x += mouseDelta.x * xSpeed * 0.02f;
             y -= mouseDelta.y * ySpeed * 0.02f;
 
@@ -96,12 +88,6 @@ public class CameraOrbit : MonoBehaviour
             var position = rotation * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
             transform.rotation = rotation;
             transform.position = position;
-        }
-        else
-        {
-            // Show cursor if necessary
-            //Cursor.visible = true;
-            //Cursor.lockState = CursorLockMode.None;
         }
 
         if (Math.Abs(prevDistance - distance) > 0.001f)
@@ -121,5 +107,26 @@ public class CameraOrbit : MonoBehaviour
         if (angle > 360)
             angle -= 360;
         return Mathf.Clamp(angle, min, max);
+    }
+    
+    public void UpdateCameraPosition()
+    {
+        Vector2 mouseDelta = mouseAction.ReadValue<Vector2>();
+        var dpiScale = 1f;
+        if (Screen.dpi < 1) dpiScale = 1;
+        if (Screen.dpi < 200) dpiScale = 1;
+        else dpiScale = Screen.dpi / 200f;
+
+        var pos = Mouse.current.position.ReadValue();
+        if (pos.x < 380 * dpiScale && Screen.height - pos.y < 250 * dpiScale) return;
+
+        x += mouseDelta.x * xSpeed * 0.02f;
+        y -= mouseDelta.y * ySpeed * 0.02f;
+
+        y = ClampAngle(y, yMinLimit, yMaxLimit);
+        var rotation = Quaternion.Euler(y, x, 0);
+        var position = rotation * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
+        transform.rotation = rotation;
+        transform.position = position;
     }
 }

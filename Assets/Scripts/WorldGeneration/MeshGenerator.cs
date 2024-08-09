@@ -236,12 +236,14 @@ public class MeshGenerator : MonoBehaviour
                 GameObject clone = Instantiate(objectToSpawn, objectToSpawn.transform.position, Quaternion.identity, stegosaurusContainer.transform);
                 clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
                 clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
+                clone.name = $"Stegosaurus #{i}";
             }
             else if(randomInt == 1)
             {
                 GameObject clone = Instantiate(objectToSpawn, objectToSpawn.transform.position, Quaternion.identity, velociraptorContainer.transform);
                 clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
                 clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
+                clone.name = $"Velociraptor #{i}";
             }
 
 
