@@ -25,8 +25,8 @@ public class AstarPathFind : MonoBehaviour
     public static int gridHeight = 5000;
     public static float cellSize = 1.0f;
     public static Node2[,] Nodes;
-    public List<GameObject> rocks = new List<GameObject>();
-    public List<GameObject> plants = new List<GameObject>();
+    List<GameObject> rocks = new List<GameObject>();
+    List<GameObject> plants = new List<GameObject>();
     
     // Start is called before the first frame update
     void Start()

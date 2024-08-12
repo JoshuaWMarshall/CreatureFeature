@@ -19,7 +19,7 @@ public class NPC : MonoBehaviour
     private void FixedUpdate()
     {
        
-        
+        YRayCast();
         for(int i=0;i<Path.Count-1;++i)
         {
             Debug.DrawLine(
@@ -138,7 +138,7 @@ public class NPC : MonoBehaviour
 
     void Update()
     {
-        YRayCast();
+       
     }
 
     public void YRayCast()

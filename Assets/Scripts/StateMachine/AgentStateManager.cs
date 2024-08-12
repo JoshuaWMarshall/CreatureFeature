@@ -15,6 +15,8 @@ public enum AgentGoal
 public class AgentStateManager : MonoBehaviour
 {
     public Herbivore herbivore;
+
+    public NPC npc;
     //public WorldStates worldStates;
 
     private AgentBaseState currentState;
@@ -35,6 +37,7 @@ public class AgentStateManager : MonoBehaviour
         herbivore = GetComponent<Herbivore>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         states = herbivore.worldStates.GetStates();
+        npc = GetComponent<NPC>();
 
         SwitchState(idleState); // Start in the Idle state
     }
@@ -87,20 +90,12 @@ public class IdleState : AgentBaseState
         goal = new SubGoal("Idle", 1, false);
 
         stateManager.herbivore.goals.Add(goal, 1);
-
+        stateManager.npc.SetDestination(null);
         timer = wanderTimer; // Start the timer  
     }
 
     public override void UpdateState(AgentStateManager stateManager)
     {
-        timer += Time.deltaTime;
-
-        // if (timer >= wanderTimer)
-        // {
-        //     Vector3 newPos = RandomNavSphere(stateManager.transform.position, wanderRadius, 13);
-        //     stateManager.navMeshAgent.SetDestination(newPos);
-        //     timer = 0;
-        // }
 
         // transitions
         if (stateManager.states["isHungry"] >= 50)
@@ -132,14 +127,6 @@ public class IdleState : AgentBaseState
         }
     }
     
-    private Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)
-    {
-        Vector3 randDirection = Random.insideUnitSphere * dist;
-        randDirection += origin;
-        NavMeshHit navHit;
-        NavMesh.SamplePosition(randDirection, out navHit, dist, layermask);
-        return navHit.position;
-    }
 }
 
 public class EatingState : AgentBaseState
