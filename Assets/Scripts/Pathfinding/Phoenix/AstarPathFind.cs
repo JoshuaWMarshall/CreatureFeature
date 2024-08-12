@@ -25,8 +25,8 @@ public class AstarPathFind : MonoBehaviour
     public static int gridHeight = 5000;
     public static float cellSize = 1.0f;
     public static Node2[,] Nodes;
-    public GameObject[] rocks;
-    public Transform[] nodesThatAreWalls;
+    public List<GameObject> rocks = new List<GameObject>();
+    public List<GameObject> plants = new List<GameObject>();
     
     // Start is called before the first frame update
     void Start()
@@ -43,7 +43,7 @@ public class AstarPathFind : MonoBehaviour
             }
         }
         // Find all game objects with the tag "rocks"
-        StartCoroutine(Wait5());
+       StartCoroutine(Wait5());
 
     }
 
@@ -51,16 +51,14 @@ public class AstarPathFind : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*
-        for (int y = 0; y <= gridHeight; ++y)
+        /*for (int y = 0; y <= gridHeight; y++)
         {
             Debug.DrawLine(new Vector3(0, 0.1f, y), new Vector3(gridWidth, 0.1f, y));
         }
         for (int x = 0; x <= gridWidth; ++x)
         {
             Debug.DrawLine(new Vector3(x, 0.1f, 0), new Vector3(x, 0.1f, gridHeight));
-        }
-        */
+        }*/
         
     }
 
@@ -173,24 +171,71 @@ public class AstarPathFind : MonoBehaviour
 
     IEnumerator Wait5()
     {
-        yield return new WaitForSeconds(5);
-        rocks = GameObject.FindGameObjectsWithTag("Rocks");
+        yield return new WaitForSeconds(5f);
+        foreach (GameObject i in GameObject.FindGameObjectsWithTag("Rocks"))
+        {
+            rocks.Add(i); 
+        }
+        foreach (GameObject i in GameObject.FindGameObjectsWithTag("Plant"))
+        {
+            plants.Add(i);
+        }
         foreach (GameObject i in rocks)
+        {
+            int xIndex = Mathf.RoundToInt(i.transform.position.x);
+            
+            int zIndex = Mathf.RoundToInt(i.transform.position.z);
+
+            // Check if the indices are within the bounds of the Nodes array
+            if (zIndex > 1 && zIndex < 4999 && xIndex > 1 && xIndex < 4999)
+            {
+                GetNode(new Vector2Int(xIndex, zIndex)).Wall = true;
+                GetNode(new Vector2Int(xIndex + 1, zIndex)).Wall = true;
+                GetNode(new Vector2Int(xIndex + -1, zIndex)).Wall = true;
+                GetNode(new Vector2Int(xIndex, zIndex + 1)).Wall = true;
+                GetNode(new Vector2Int(xIndex, zIndex - 1)).Wall = true;
+                GetNode(new Vector2Int(xIndex + 1, zIndex + 1)).Wall = true;
+                GetNode(new Vector2Int(xIndex - 1, zIndex - 1)).Wall = true;
+                //Debug.Log(xIndex +" ," + zIndex );
+            }
+            else
+            {
+                Debug.LogError("Index out of bounds Rock: (" + xIndex + ", " + zIndex + ") Phoenix Made Error");
+                Destroy(i);
+            }
+        }
+        foreach (GameObject i in plants)
         {
             int xIndex = Mathf.RoundToInt(i.transform.position.x);
             int zIndex = Mathf.RoundToInt(i.transform.position.z);
 
             // Check if the indices are within the bounds of the Nodes array
-            if (zIndex > 0 && zIndex < 5000 && xIndex > 0 && xIndex < 5000)
+            if (zIndex > 1 && zIndex < 4999 && xIndex > 1 && xIndex < 4999)
             {
-                GetNode(new Vector2Int(xIndex, zIndex)).Wall = true;
-               // Debug.Log(xIndex +" ," + zIndex );
+                GetNode(new Vector2Int(xIndex, zIndex)).C = 5;
+                GetNode(new Vector2Int(xIndex + 1, zIndex)).C = 5;
+                GetNode(new Vector2Int(xIndex + -1, zIndex)).C = 5;
+                GetNode(new Vector2Int(xIndex, zIndex + 1)).C = 5;
+                GetNode(new Vector2Int(xIndex, zIndex - 1)).C = 5;
+                GetNode(new Vector2Int(xIndex + 1, zIndex + 1)).C = 5;
+                GetNode(new Vector2Int(xIndex - 1, zIndex - 1)).C = 5;
+                // Debug.Log(xIndex +" ," + zIndex );
             }
             else
             {
-                Debug.LogError("Index out of bounds: (" + xIndex + ", " + zIndex + ") Phoenix Made Error");
+                Debug.LogError("Index out of bounds Plant: (" + xIndex + ", " + zIndex + ") Phoenix Made Error");
                 Destroy(i);
             }
+        }
+
+        for (int i = rocks.Count - 1; i >= 0; i--)
+        {
+            rocks.RemoveAt(i);
+        }
+
+        for (int i = plants.Count -1; i >= 0; i--)
+        {
+            plants.RemoveAt(i);
         }
         Debug.Log("Done");
     }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
 using Random = UnityEngine.Random;
 
 public class NPC : MonoBehaviour
@@ -71,14 +72,19 @@ public class NPC : MonoBehaviour
             {
 
                 // Calculate valid range for x
-                int minX = Mathf.Max(0, (int)transform.position.x - 100);
-                int maxX = Mathf.Min(AstarPathFind.gridWidth, (int)transform.position.x + 100);
+                int minX = Mathf.Max(0, (int)transform.position.x - maxRange);
+                int maxX = Mathf.Min(AstarPathFind.gridWidth, (int)transform.position.x + maxRange);
+                Math.Clamp(newtarget.x, 0, AstarPathFind.gridWidth);
                 newtarget.x = Random.Range(minX, maxX);
 
                 // Calculate valid range for y
-                int minY = Mathf.Max(0, (int)transform.position.z - 100);
-                int maxY = Mathf.Min(AstarPathFind.gridHeight, (int)transform.position.z + 100);
+                int minY = Mathf.Max(0, (int)transform.position.z - maxRange);
+                int maxY = Mathf.Min(AstarPathFind.gridHeight, (int)transform.position.z + maxRange);
+                Math.Clamp(newtarget.y, 0, AstarPathFind.gridWidth);
                 newtarget.y = Random.Range(minY, maxY);
+
+               
+                
             }while (AstarPathFind.GetNode(newtarget).Wall);
 
             Path = AstarPathFind.FindPath(
@@ -107,9 +113,10 @@ public class NPC : MonoBehaviour
                     Path[Path.Count - 1].x + AstarPathFind.cellSize * 0.5f, 
                     0.5f, 
                     Path[Path.Count - 1].y + AstarPathFind.cellSize * 0.5f);
-                GetComponent<Rigidbody>().velocity = (target - transform.position).normalized * speed;
                 // Calculate the direction to the target
                 Vector3 direction = (target - transform.position).normalized;
+                direction.y = 0; // Set the y component to 0 to only affect x and z axes
+                GetComponent<Rigidbody>().velocity = direction * speed;
 
                 // Calculate the rotation angle in degrees
                 float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
