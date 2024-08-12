@@ -4,27 +4,7 @@ using UnityEngine;
 
 public class Herbivore : GAgent
 {
-    //private static Herbivore _instance;
-    //public static Herbivore Instance
-    //{
-    //    get
-    //    {
-    //        if (_instance == null)
-    //        {
-    //            _instance = new Herbivore();
-    //        }
-    //        return _instance;
-    //    }
-    //}
-    
-    //private Herbivore()
-    //{
-    //    // Private constructor to prevent external instantiation
-    //    hunger = 0;
-    //    energy = 100;
-    //    thirst = 0;
-    //}
-    
+   
     protected override void Start()
     {
         base.Start();

@@ -35,7 +35,12 @@ public class UiController : MonoBehaviour
         dinoViewerPresenter = new DinoViewerPresenter(root, this);
         
         // delayed so all dinos are finished spawning
-        Invoke("InitDinoViewer", 1f);
+        //Invoke("InitDinoViewer", 1f);
+    }
+
+    private void OnPostRender()
+    {
+        InitDinoViewer();
     }
 
     private void Update()

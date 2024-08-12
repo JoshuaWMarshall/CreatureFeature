@@ -188,11 +188,11 @@ public class AstarPathFind : MonoBehaviour
             }
             else
             {
-                Debug.LogError("Index out of bounds: (" + xIndex + ", " + zIndex + ") Phoenix Made Error");
+                //Debug.LogError("Index out of bounds: (" + xIndex + ", " + zIndex + ") Phoenix Made Error");
                 Destroy(i);
             }
         }
-        Debug.Log("Done");
+        //Debug.Log("Done");
     }
 }
 

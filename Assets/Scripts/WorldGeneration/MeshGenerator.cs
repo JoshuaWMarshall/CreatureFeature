@@ -9,6 +9,7 @@ using UnityEngine.AI;
 public class MeshGenerator : MonoBehaviour
 {
     Mesh mesh;
+    private GameObject waterMesh;
     public int MESH_SCALE = 100;
     public GameObject[] objects;
     [SerializeField] private AnimationCurve heightCurve;
@@ -28,6 +29,7 @@ public class MeshGenerator : MonoBehaviour
     public int octaves;
     public float lacunarity;
 
+    public bool randomiseSeed = false;
     public int seed;
 
     private float lastNoiseHeight;
@@ -38,19 +40,35 @@ public class MeshGenerator : MonoBehaviour
     public GameObject velociraptorContainer;
     public GameObject embelishmentsContainer;
 
-    public GameObject[] dinos;
+    public GameObject[] dinosPefabs;
     public int maxDinos;
+    public List<GAgent> allDinos = new List<GAgent>();
+    private List<GameObject> allForrests = new List<GameObject>();
 
     void Start()
     {
         // Use this method if you havn't filled out the properties in the inspector
         // SetNullProperties(); 
 
-        mesh = new Mesh();
-        GetComponent<MeshFilter>().mesh = mesh;
-        CreateNewMap();
+        ClearLists();
 
-        MapEmbellishments();
+        if (mesh == null)
+        {
+            mesh = new Mesh();
+            GetComponent<MeshFilter>().mesh = mesh;
+        }
+
+
+        //LOAD
+        //SaveLoad.LoadGame(this);
+
+        //SaveLoad.SaveGame(this, allDinos);
+    }
+
+    private void ClearLists()
+    {
+        allDinos.Clear();
+        allForrests.Clear();
     }
 
     private void SetNullProperties() 
@@ -61,6 +79,39 @@ public class MeshGenerator : MonoBehaviour
         if (lacunarity <= 0) lacunarity = 2;
         if (scale <= 0) scale = 50;
     } 
+
+    public void GenerateWorld()
+    {
+        mesh = new Mesh();
+        GetComponent<MeshFilter>().mesh = mesh;
+
+        CreateNewMap();
+        MapEmbellishments();
+    }
+
+    public void DestroyWorld()
+    {
+        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        meshFilter.sharedMesh = null;   
+        mesh = null;
+        DestroyImmediate(waterMesh);
+
+        while (stegosaurusContainer.transform.childCount != 0)
+        {
+            DestroyImmediate(stegosaurusContainer.transform.GetChild(0).gameObject);
+        }
+
+        while (velociraptorContainer.transform.childCount != 0)
+        {
+            DestroyImmediate(velociraptorContainer.transform.GetChild(0).gameObject);
+        }
+
+
+        while (embelishmentsContainer.transform.childCount != 0)
+        {
+            DestroyImmediate(embelishmentsContainer.transform.GetChild(0).gameObject);
+        }
+    }
 
     public void CreateNewMap()
     {
@@ -97,8 +148,11 @@ public class MeshGenerator : MonoBehaviour
 
     private Vector2[] GetOffsetSeed()
     {
-        seed = Random.Range(0, 1000);
-        
+        if (randomiseSeed)
+        {
+            seed = Random.Range(0, 1000);
+        }
+ 
         // changes area of map
         System.Random prng = new System.Random(seed);
         Vector2[] octaveOffsets = new Vector2[octaves];
@@ -183,7 +237,7 @@ public class MeshGenerator : MonoBehaviour
         }
     }
 
-    private void MapEmbellishments() 
+    public void PlaceTrees()
     {
         for (int i = 0; i < vertices.Length; i++)
         {
@@ -191,7 +245,7 @@ public class MeshGenerator : MonoBehaviour
             Vector3 worldPt = transform.TransformPoint(mesh.vertices[i]);
             var noiseHeight = worldPt.y;
             // Stop generation if height difference between 2 vertices is too steep
-            if(System.Math.Abs(lastNoiseHeight - worldPt.y) < 25)
+            if (System.Math.Abs(lastNoiseHeight - worldPt.y) < 25)
             {
                 // min height for object generation
                 if (noiseHeight > waterHeight + 0.1f)
@@ -205,26 +259,72 @@ public class MeshGenerator : MonoBehaviour
 
                         clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
                         clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
+                        allForrests.Add(clone);
+                    }
+                }
+            }
+            lastNoiseHeight = noiseHeight;
+        }
+    }
 
+    public GAgent PlaceDino(bool isStego)
+    {
+        GameObject clone;
+
+        if (isStego)
+        {
+           clone = Instantiate(dinosPefabs[0], dinosPefabs[0].transform.position, Quaternion.identity, stegosaurusContainer.transform);
+        }
+        else if(dinosPefabs[1] !=  null) 
+        {
+           clone = Instantiate(dinosPefabs[1], dinosPefabs[1].transform.position, Quaternion.identity, velociraptorContainer.transform);
+        }
+        else
+        {
+            return null;
+        }
+
+        allDinos.Add(clone.GetComponent<GAgent>());
+
+        return clone.GetComponent<GAgent>();
+    }
+
+
+    public void MapEmbellishments()
+    {
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            // find actual position of vertices in the game
+            Vector3 worldPt = transform.TransformPoint(mesh.vertices[i]);
+            var noiseHeight = worldPt.y;
+            // Stop generation if height difference between 2 vertices is too steep
+            if (System.Math.Abs(lastNoiseHeight - worldPt.y) < 25)
+            {
+                // min height for object generation
+                if (noiseHeight > waterHeight + 0.1f)
+                {
+                    // Chance to generate trees
+                    if (Random.Range(1, 5) == 1)
+                    {
+                        GameObject objectToSpawn = objects[Random.Range(0, objects.Length)];
+                        var spawnAboveTerrainBy = noiseHeight * 2;
+                        GameObject clone = Instantiate(objectToSpawn, new Vector3(mesh.vertices[i].x * MESH_SCALE, spawnAboveTerrainBy, mesh.vertices[i].z * MESH_SCALE), Quaternion.identity, embelishmentsContainer.transform);
+
+                        clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
+                        clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
+                        allForrests.Add(clone);
                     }
                 }
             }
             lastNoiseHeight = noiseHeight;
         }
 
-        for (int i = 0; i < maxDinos; i++)
+        for (int i = 0; i <= maxDinos; i++)
         {
             Vector3 worldPt = transform.TransformPoint(GetRandomInnerVertex());
-            int randomInt = Random.Range(0, dinos.Length);
-            GameObject objectToSpawn = dinos[randomInt];
+            int randomInt = Random.Range(0, dinosPefabs.Length);
+            GameObject objectToSpawn = dinosPefabs[randomInt];
             objectToSpawn.transform.position = worldPt + new Vector3(0, 100, 0);
-            // NavMeshHit closestHit;
-            // if (NavMesh.SamplePosition(worldPt, out closestHit, 500, 1))
-            // {
-            //     objectToSpawn.transform.position = closestHit.position;
-            //
-            // }
-
 
             if (randomInt == 0)
             {
@@ -232,19 +332,19 @@ public class MeshGenerator : MonoBehaviour
                 clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
                 clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
                 clone.name = $"Stegosaurus #{i}";
+                allDinos.Add(clone.GetComponent<GAgent>());
             }
-            else if(randomInt == 1)
+            else if (randomInt == 1)
             {
                 GameObject clone = Instantiate(objectToSpawn, objectToSpawn.transform.position, Quaternion.identity, velociraptorContainer.transform);
                 clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
                 clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
                 clone.name = $"Velociraptor #{i}";
+                allDinos.Add(clone.GetComponent<GAgent>());
             }
-
-
         }
     }
-    
+
     private Vector3 GetRandomInnerVertex()
     {
         // Ensure we are only working with inner vertices by avoiding the edges
@@ -265,7 +365,7 @@ public class MeshGenerator : MonoBehaviour
         if (waterMeshPrefab != null)
         {
             // *2 as water mesh is 50m, map mesh is 100m
-            GameObject waterMesh = Instantiate(waterMeshPrefab, new Vector3((xSize * MESH_SCALE/2), waterHeight, (zSize * MESH_SCALE/2)), Quaternion.identity);
+            waterMesh = Instantiate(waterMeshPrefab, new Vector3((xSize * MESH_SCALE/2), waterHeight, (zSize * MESH_SCALE/2)), Quaternion.identity);
             waterMesh.transform.localScale = new Vector3(xSize * 2, 1, zSize * 2);
             waterMesh.layer = 4;
 

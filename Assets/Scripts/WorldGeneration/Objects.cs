@@ -9,7 +9,9 @@ public class Objects : MonoBehaviour
 
     void Start()
     {
-        FindLand();
+        Invoke("FindLand", 0.1f);
+
+        //FindLand();
     }
 
     public void FindLand()

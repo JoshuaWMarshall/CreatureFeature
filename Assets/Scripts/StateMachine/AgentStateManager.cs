@@ -59,6 +59,37 @@ public class AgentStateManager : MonoBehaviour
         currentState = newState;
         currentState.EnterState(this);
     }
+
+    public void SwitchState(AgentGoal newState)
+    {
+        if (newState == currentAgentGoal)
+        {
+            return;
+        }
+
+        if(currentState != null)
+        {
+            currentState.ExitState(this);
+        }
+
+        switch (newState)
+        {
+            case AgentGoal.Idle:
+                currentState = idleState;
+                    break;
+            case AgentGoal.Eating:
+                currentState = eatingState;
+                break;
+            case AgentGoal.Drinking:
+                currentState = drinkingState;
+                break;
+            case AgentGoal.Resting:
+                currentState= restingState;
+                break;
+        }
+
+        currentState.EnterState(this);
+    }
 }
 
 #region States
@@ -73,9 +104,9 @@ public abstract class AgentBaseState
 
 public class IdleState : AgentBaseState
 {
-    private float wanderRadius = 200f;
-    private float wanderTimer = 5f;
-    private float timer;
+    //private float wanderRadius = 200f;
+    //private float wanderTimer = 5f;
+    //private float timer;
     
     public override void EnterState(AgentStateManager stateManager)
     {
@@ -88,12 +119,12 @@ public class IdleState : AgentBaseState
 
         stateManager.herbivore.goals.Add(goal, 1);
 
-        timer = wanderTimer; // Start the timer  
+        //timer = wanderTimer; // Start the timer  
     }
 
     public override void UpdateState(AgentStateManager stateManager)
     {
-        timer += Time.deltaTime;
+        //timer += Time.deltaTime;
 
         // if (timer >= wanderTimer)
         // {
