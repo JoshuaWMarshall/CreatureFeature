@@ -8,6 +8,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(MeshFilter))]
 public class MeshGenerator : MonoBehaviour
 {
+    private bool isWorldGenerated = false;
     Mesh mesh;
     private GameObject waterMesh;
     public int MESH_SCALE = 100;
@@ -50,19 +51,10 @@ public class MeshGenerator : MonoBehaviour
         // Use this method if you havn't filled out the properties in the inspector
         // SetNullProperties(); 
 
-        ClearLists();
-
-        if (mesh == null)
+        if (!isWorldGenerated)
         {
-            mesh = new Mesh();
-            GetComponent<MeshFilter>().mesh = mesh;
+            GenerateWorld();
         }
-
-
-        //LOAD
-        //SaveLoad.LoadGame(this);
-
-        //SaveLoad.SaveGame(this, allDinos);
     }
 
     private void ClearLists()
@@ -85,14 +77,19 @@ public class MeshGenerator : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
+        ClearLists();   
         CreateNewMap();
         MapEmbellishments();
+        isWorldGenerated = true;
     }
 
     public void DestroyWorld()
     {
+        isWorldGenerated = false;
         MeshFilter meshFilter = GetComponent<MeshFilter>();
-        meshFilter.sharedMesh = null;   
+        meshFilter.sharedMesh = null;
+        MeshCollider meshCollider = GetComponent<MeshCollider>();
+        meshCollider.sharedMesh = null;
         mesh = null;
         DestroyImmediate(waterMesh);
 
@@ -323,24 +320,32 @@ public class MeshGenerator : MonoBehaviour
         {
             Vector3 worldPt = transform.TransformPoint(GetRandomInnerVertex());
             int randomInt = Random.Range(0, dinosPefabs.Length);
-            GameObject objectToSpawn = dinosPefabs[randomInt];
-            objectToSpawn.transform.position = worldPt + new Vector3(0, 100, 0);
 
-            if (randomInt == 0)
+            if (dinosPefabs != null)
             {
-                GameObject clone = Instantiate(objectToSpawn, objectToSpawn.transform.position, Quaternion.identity, stegosaurusContainer.transform);
-                clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
-                clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
-                clone.name = $"Stegosaurus #{i}";
-                allDinos.Add(clone.GetComponent<GAgent>());
+                GameObject objectToSpawn = dinosPefabs[randomInt];
+                objectToSpawn.transform.position = worldPt + new Vector3(0, 100, 0);
+                
+                if (randomInt == 0)
+                {
+                    GameObject clone = Instantiate(objectToSpawn, objectToSpawn.transform.position, Quaternion.identity, stegosaurusContainer.transform);
+                    clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
+                    clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
+                    clone.name = $"Stegosaurus #{i}";
+                    allDinos.Add(clone.GetComponent<GAgent>());
+                }
+                else if (randomInt == 1)
+                {
+                    GameObject clone = Instantiate(objectToSpawn, objectToSpawn.transform.position, Quaternion.identity, velociraptorContainer.transform);
+                    clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
+                    clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
+                    clone.name = $"Velociraptor #{i}";
+                    allDinos.Add(clone.GetComponent<GAgent>());
+                }
             }
-            else if (randomInt == 1)
+            else
             {
-                GameObject clone = Instantiate(objectToSpawn, objectToSpawn.transform.position, Quaternion.identity, velociraptorContainer.transform);
-                clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
-                clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
-                clone.name = $"Velociraptor #{i}";
-                allDinos.Add(clone.GetComponent<GAgent>());
+                Debug.LogWarning("No Dino prefabs found");
             }
         }
     }
@@ -364,7 +369,7 @@ public class MeshGenerator : MonoBehaviour
     {
         if (waterMeshPrefab != null)
         {
-            // *2 as water mesh is 50m, map mesh is 100m
+            // *2 size as water mesh is 50m, map mesh is 100m
             waterMesh = Instantiate(waterMeshPrefab, new Vector3((xSize * MESH_SCALE/2), waterHeight, (zSize * MESH_SCALE/2)), Quaternion.identity);
             waterMesh.transform.localScale = new Vector3(xSize * 2, 1, zSize * 2);
             waterMesh.layer = 4;

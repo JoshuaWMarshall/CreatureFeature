@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/Ui/Slider.uss?fileID=7433441132597879392&amp;guid=78b7160b8fe668444994f1b8fe7b39c3&amp;type=3#Slider" />
-    <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SeedNum" style="position: absolute; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; font-size: 35px; left: 30px; top: 30px;" />
+    <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label_SeedNum" style="position: absolute; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; font-size: 35px; left: 30px; top: 30px;" />
     <ui:VisualElement style="flex-grow: 1; margin-top: 30px; margin-right: 30px; margin-bottom: 30px; margin-left: 30px;">
         <ui:VisualElement style="flex-grow: 1; height: 30%;" />
         <ui:VisualElement style="flex-grow: 1; height: 30%;" />

@@ -4,12 +4,12 @@ using System.Data.Common;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
-public class DinoViewerPresenter : MonoBehaviour
+public class DinoViewerPresenter 
 {
     private UiController uiController;
-    public List<GameObject> displayedDinos;
-    public List<GameObject> stegosaurus;
-    public List<GameObject> velociraptor;
+    public List<GameObject> displayedDinos = new List<GameObject>();
+    public List<GameObject> stegosaurus = new List<GameObject>();
+    public List<GameObject> velociraptor = new List<GameObject>();
 
     private int currentIndex = 0;
     public CameraOrbit cameraOrbit;
@@ -99,7 +99,7 @@ public class DinoViewerPresenter : MonoBehaviour
         contents.Display(!enabled);
     }
     
-    private void SetDinoType(string type)
+    public void SetDinoType(string type)
     {
         switch (type)
         {
@@ -135,23 +135,25 @@ public class DinoViewerPresenter : MonoBehaviour
     public void LoadDinoStats(int indentBy)
     {
         Indent(indentBy);
-
         GAgent currentDino = CurrentDino();
-        uiController.currentDino = currentDino;
         
-        cameraOrbit.target = displayedDinos[currentIndex];
-        cameraOrbit.UpdateCameraPosition();
-        
-        currentAction.text = "Current Action: " + currentDino.currentAction;
-        dinoName.text = "Dino Name :" + currentDino.name;
-        hungerSlider.value = (float)currentDino.hunger;
-        thirstSlider.value = (float)currentDino.thirst;
-        energySlider.value = (float)currentDino.energy;
+        if (currentDino!)
+        {
+            uiController.currentDino = currentDino;
+
+            cameraOrbit.target = displayedDinos[currentIndex];
+            cameraOrbit.UpdateCameraPosition();
+            currentAction.text = "Current Action: " + currentDino.currentAction;
+            dinoName.text = "Dino Name :" + currentDino.name;
+            hungerSlider.value = (float)currentDino.hunger;
+            thirstSlider.value = (float)currentDino.thirst;
+            energySlider.value = (float)currentDino.energy;
+        }
     }
 
     public GAgent CurrentDino()
     {
-        if (displayedDinos.Count == 0)
+        if (displayedDinos == null || displayedDinos.Count == 0)
         {
             return null;
         }
@@ -160,7 +162,7 @@ public class DinoViewerPresenter : MonoBehaviour
 
     public void Indent(int step)
     {
-        if (displayedDinos.Count == 0)
+        if (displayedDinos == null || displayedDinos.Count == 0)
         {
             return;
         }

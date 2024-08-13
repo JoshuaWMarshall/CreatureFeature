@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 
 public class UiController : MonoBehaviour
 {
+
     private DinoViewerPresenter dinoViewerPresenter;
     private VisualElement root;
 
@@ -15,8 +16,8 @@ public class UiController : MonoBehaviour
     private List<GameObject> velociraptor;
 
     [HideInInspector] public GAgent currentDino;
-    private CameraOrbit cameraOrbit;
-    
+    public CameraOrbit cameraOrbit;
+    public MeshGenerator meshGenerator;
     private void OnEnable()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
@@ -26,7 +27,7 @@ public class UiController : MonoBehaviour
     {
         stegosaurusContainer = GameObject.FindGameObjectWithTag("StegoContainer");
         velociraptorContainer = GameObject.FindGameObjectWithTag("RaptorContainer");
-        cameraOrbit = FindObjectOfType<CameraOrbit>();
+        //cameraOrbit = FindObjectOfType<CameraOrbit>();
 
     }
     
@@ -35,12 +36,12 @@ public class UiController : MonoBehaviour
         dinoViewerPresenter = new DinoViewerPresenter(root, this);
         
         // delayed so all dinos are finished spawning
-        //Invoke("InitDinoViewer", 1f);
+        Invoke("InitDinoViewer", 1f);
     }
 
     private void OnPostRender()
     {
-        InitDinoViewer();
+        //InitDinoViewer();
     }
 
     private void Update()
@@ -58,13 +59,17 @@ public class UiController : MonoBehaviour
     {
         //Init
         FindDinosInScene();
-        dinoViewerPresenter.displayedDinos= stegosaurus;
         dinoViewerPresenter.stegosaurus = stegosaurus;
         dinoViewerPresenter.velociraptor = velociraptor;
         dinoViewerPresenter.cameraOrbit = cameraOrbit;
+        dinoViewerPresenter.SetDinoType("Stegosaurus");
+        // if (dinoViewerPresenter.displayedDinos is { Count: > 0 })
+        // {
+        //     cameraOrbit.target = dinoViewerPresenter.CurrentDino().gameObject;
+        // }
 
-        cameraOrbit.target = dinoViewerPresenter.CurrentDino().gameObject;
         dinoViewerPresenter.LoadDinoStats(0);
+        dinoViewerPresenter.seedNumber.text = "Seed: " + meshGenerator.seed;
     }
     
     private void FindDinosInScene()

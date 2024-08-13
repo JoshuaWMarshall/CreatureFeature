@@ -44,6 +44,7 @@ public class Objects : MonoBehaviour
         }
         else
         {
+            // Didnt find any mesh to place on
             Destroy(gameObject);
         }
     }

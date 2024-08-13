@@ -6,7 +6,7 @@ public class CameraOrbit : MonoBehaviour
 {
     public GameObject target;
     public float distance = 10.0f;
-
+    public float scrollSensitivity = 2f;
     public float minDistance = 20f; // Minimum zoom distance
     public float maxDistance = 500f; // Maximum zoom distance
 
@@ -66,7 +66,7 @@ public class CameraOrbit : MonoBehaviour
     void LateUpdate()
     {
         // Update distance and clamp it between min and max values
-        distance -= zoomAction.ReadValue<float>() * 2;
+        distance -= zoomAction.ReadValue<float>() * scrollSensitivity;
         distance = Mathf.Clamp(distance, minDistance, maxDistance);
 
         if (target && rightClickAction.ReadValue<float>() > 0)
@@ -89,15 +89,12 @@ public class CameraOrbit : MonoBehaviour
             transform.rotation = rotation;
             transform.position = position;
         }
-
-        if (Math.Abs(prevDistance - distance) > 0.001f)
-        {
-            prevDistance = distance;
-            var rot = Quaternion.Euler(y, x, 0);
-            var po = rot * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
-            transform.rotation = rot;
-            transform.position = po;
-        }
+        
+        prevDistance = distance;
+        var rot = Quaternion.Euler(y, x, 0);
+        var po = rot * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
+        transform.rotation = rot;
+        transform.position = po;
     }
 
     static float ClampAngle(float angle, float min, float max)
