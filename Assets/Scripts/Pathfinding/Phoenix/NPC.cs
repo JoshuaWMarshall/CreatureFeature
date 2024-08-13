@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
+using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class NPC : MonoBehaviour
@@ -15,7 +17,7 @@ public class NPC : MonoBehaviour
     public int maxRange = 100;
     private bool isRandom = false;
 
-
+    Stopwatch watch = new Stopwatch();
     private void FixedUpdate()
     {
        
@@ -57,6 +59,7 @@ public class NPC : MonoBehaviour
              
                 } while (AstarPathFind.GetNode(newtarget).Wall);
 
+                
                 Path = AstarPathFind.FindPath(
                     new Vector2Int((int)transform.position.x, (int)transform.position.z),
                     newtarget);
@@ -86,11 +89,13 @@ public class NPC : MonoBehaviour
                
                 
             }while (AstarPathFind.GetNode(newtarget).Wall);
-
+            watch.Reset();
+            watch.Start();
             Path = AstarPathFind.FindPath(
                 new Vector2Int((int)transform.position.x, (int)transform.position.z),
                 newtarget);
-          
+            watch.Stop();
+            Debug.Log(watch.Elapsed);
         }
         if (Path.Count != 0)
         {
