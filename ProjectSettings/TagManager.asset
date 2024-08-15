@@ -9,6 +9,14 @@ TagManager:
   - ScreenCamera
   - cockpit_capitalLaser
   - Plant
+  - RestArea
+  - Water
+  - Herbivore
+  - Carnivore
+  - StegoContainer
+  - RaptorContainer
+  - Rocks
+  - Forrest
   layers:
   - Default
   - TransparentFX
@@ -24,8 +32,8 @@ TagManager:
   - Camera
   - MainCameraOnly
   - Terrain
-  - 
-  - 
+  - Trees
+  - Dinos
   - 
   - 
   - 
