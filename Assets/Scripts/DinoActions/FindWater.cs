@@ -4,14 +4,6 @@ using UnityEngine;
 
 public class FindWater : GAction
 {
-    private MeshGenerator meshGenerator;
-
-    public override void Start()
-    {
-        base.Start();
-        meshGenerator = FindObjectOfType<MeshGenerator>();
-    }
-
     public override bool PrePerform()
     {
         FindClosestWaterIntersection();

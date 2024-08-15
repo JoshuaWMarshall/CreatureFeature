@@ -89,12 +89,15 @@ public class CameraOrbit : MonoBehaviour
             transform.rotation = rotation;
             transform.position = position;
         }
-        
-        prevDistance = distance;
-        var rot = Quaternion.Euler(y, x, 0);
-        var po = rot * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
-        transform.rotation = rot;
-        transform.position = po;
+
+        if (target)
+        {
+            prevDistance = distance;
+            var rot = Quaternion.Euler(y, x, 0);
+            var po = rot * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
+            transform.rotation = rot;
+            transform.position = po;
+        }
     }
 
     static float ClampAngle(float angle, float min, float max)

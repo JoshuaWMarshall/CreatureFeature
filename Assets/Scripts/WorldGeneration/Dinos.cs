@@ -2,19 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Objects : MonoBehaviour
+public class Dinos : Objects
 {
-    public LayerMask terrainLayerMask = 13;
-    public float waterHeight = 100f; // Set the height of the water plane
-    
-    public virtual void Start()
+    public MeshGenerator meshGenerator;
+    private GAgent gAgent;
+    public override void Start()
     {
-        Invoke("FindLand", 0.1f);
+        if (meshGenerator == null)
+        {
+            meshGenerator = FindObjectOfType<MeshGenerator>();
+        }
 
-        //FindLand();
+        if (gAgent == null)
+        {
+            gAgent = GetComponent<GAgent>();
+        }
+        
+        
+        Invoke("FindLand", 0.1f);
     }
 
-    public virtual void FindLand()
+    public override void FindLand()
     {
         Ray rayDown = new Ray(transform.position, Vector3.down);
         Ray rayUp = new Ray(transform.position, Vector3.up);
@@ -40,6 +48,11 @@ public class Objects : MonoBehaviour
             {
                 //Debug.Log("Object is below water");
                 Destroy(gameObject);
+              
+            }
+            else
+            {
+                meshGenerator.allDinos.Add(gAgent);
             }
         }
         else

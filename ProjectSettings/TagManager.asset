@@ -15,6 +15,8 @@ TagManager:
   - Carnivore
   - StegoContainer
   - RaptorContainer
+  - Rocks
+  - Forrest
   layers:
   - Default
   - TransparentFX
@@ -31,7 +33,7 @@ TagManager:
   - MainCameraOnly
   - Terrain
   - Trees
-  - 
+  - Dinos
   - 
   - 
   - 

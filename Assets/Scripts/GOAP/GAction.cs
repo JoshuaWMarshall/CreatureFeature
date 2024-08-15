@@ -14,17 +14,19 @@ public abstract class GAction : MonoBehaviour
     public WorldState[] preConditions;
     public WorldState[] afterEffects;
     public NPC npc;
+    public MeshGenerator meshGenerator;
     public GAgent gAgent;
+    public TargetManager targetManager;
     public Dictionary<string, int> preconditions;
     public Dictionary<string, int> effects;
-
-    public WorldStates agentBeliefs;
-
+    
     public bool running = false;
 
     public virtual void Start()
     {
         npc = GetComponent<NPC>();
+        targetManager = FindObjectOfType<TargetManager>();
+        meshGenerator = FindObjectOfType<MeshGenerator>();
     }
 
     public GAction()

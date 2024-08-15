@@ -469,6 +469,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0250261ab929c63428d2c5624d2166c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rocks: []
+  nodesThatAreWalls: []
 --- !u!1001 &1755494428
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -482,10 +484,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -354038753303140340, guid: ea7223548caf1984193a4970bcc4317b, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
@@ -546,10 +544,6 @@ PrefabInstance:
       value: Stegasaurus_Yellow
       objectReference: {fileID: 0}
     - target: {fileID: 3877144483562535591, guid: ea7223548caf1984193a4970bcc4317b, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}

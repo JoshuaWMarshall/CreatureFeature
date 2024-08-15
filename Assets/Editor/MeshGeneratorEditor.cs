@@ -16,7 +16,7 @@ public class MeshGeneratorEditor : Editor
     {
         DrawDefaultInspector();
 
-        if (GUILayout.Button("Generate"))
+        if (GUILayout.Button("Generate World"))
         {
             Generate();
         }

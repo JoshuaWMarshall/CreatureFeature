@@ -8,6 +8,8 @@ using UnityEngine.AI;
 [RequireComponent(typeof(MeshFilter))]
 public class MeshGenerator : MonoBehaviour
 {
+    public TargetManager targetManager;
+    
     private bool isWorldGenerated = false;
     Mesh mesh;
     private GameObject waterMesh;
@@ -44,7 +46,13 @@ public class MeshGenerator : MonoBehaviour
     public GameObject[] dinosPefabs;
     public int maxDinos;
     public List<GAgent> allDinos = new List<GAgent>();
-    private List<GameObject> allForrests = new List<GameObject>();
+    public List<GameObject> allForrests = new List<GameObject>();
+
+    
+    //dictionaries to store food targets for herbivores and carnivores
+    public Dictionary<GameObject, bool> herbivoreFood = new Dictionary<GameObject, bool>();
+    public Dictionary<GameObject, bool> carnivoreFood = new Dictionary<GameObject, bool>();
+
 
     void Start()
     {
@@ -61,8 +69,10 @@ public class MeshGenerator : MonoBehaviour
     {
         allDinos.Clear();
         allForrests.Clear();
+        
+        herbivoreFood.Clear();
+        carnivoreFood.Clear();
     }
-
     private void SetNullProperties() 
     {
         if (xSize <= 0) xSize = 50;
@@ -142,7 +152,49 @@ public class MeshGenerator : MonoBehaviour
             }
         }
     }
+    
+    private void CreateTriangles() 
+    {
+        // Need 6 vertices to create a square (2 triangles)
+        triangles = new int[xSize * zSize * 6];
 
+        int vert = 0;
+        int tris = 0;
+        // Go to next row
+        for (int z = 0; z < xSize; z++)
+        {
+            // fill row
+            for (int x = 0; x < xSize; x++)
+            {
+                triangles[tris + 0] = vert + 0;
+                triangles[tris + 1] = vert + xSize + 1;
+                triangles[tris + 2] = vert + 1;
+                triangles[tris + 3] = vert + 1;
+                triangles[tris + 4] = vert + xSize + 1;
+                triangles[tris + 5] = vert + xSize + 2;
+
+                vert++;
+                tris += 6;
+            }
+            vert++;
+        }
+    }
+    
+    private void UpdateMesh()
+    {
+        mesh.Clear();
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+        mesh.colors = colors;
+        mesh.RecalculateTangents();
+        mesh.RecalculateNormals();
+        
+        GetComponent<MeshCollider>().sharedMesh = mesh;
+        gameObject.transform.localScale = new Vector3(MESH_SCALE, MESH_SCALE, MESH_SCALE);
+        // Terrain Layer = 13
+        gameObject.layer = 13;
+    }
+    
     private Vector2[] GetOffsetSeed()
     {
         if (randomiseSeed)
@@ -194,33 +246,6 @@ public class MeshGenerator : MonoBehaviour
     }
 
 
-    private void CreateTriangles() 
-    {
-        // Need 6 vertices to create a square (2 triangles)
-        triangles = new int[xSize * zSize * 6];
-
-        int vert = 0;
-        int tris = 0;
-        // Go to next row
-        for (int z = 0; z < xSize; z++)
-        {
-            // fill row
-            for (int x = 0; x < xSize; x++)
-            {
-                triangles[tris + 0] = vert + 0;
-                triangles[tris + 1] = vert + xSize + 1;
-                triangles[tris + 2] = vert + 1;
-                triangles[tris + 3] = vert + 1;
-                triangles[tris + 4] = vert + xSize + 1;
-                triangles[tris + 5] = vert + xSize + 2;
-
-                vert++;
-                tris += 6;
-            }
-            vert++;
-        }
-    }
-
     private void ColorMap()
     {
         colors = new Color[vertices.Length];
@@ -257,6 +282,14 @@ public class MeshGenerator : MonoBehaviour
                         clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
                         clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
                         allForrests.Add(clone);
+
+                        foreach (Transform child in clone.transform)
+                        {
+                            if (CompareTag("Plant"))
+                            {
+                                herbivoreFood.Add(child.gameObject, true);
+                            }
+                        }
                     }
                 }
             }
@@ -271,6 +304,7 @@ public class MeshGenerator : MonoBehaviour
         if (isStego)
         {
            clone = Instantiate(dinosPefabs[0], dinosPefabs[0].transform.position, Quaternion.identity, stegosaurusContainer.transform);
+           carnivoreFood.Add(clone, true);
         }
         else if(dinosPefabs[1] !=  null) 
         {
@@ -281,7 +315,7 @@ public class MeshGenerator : MonoBehaviour
             return null;
         }
 
-        allDinos.Add(clone.GetComponent<GAgent>());
+        //allDinos.Add(clone.GetComponent<GAgent>());
 
         return clone.GetComponent<GAgent>();
     }
@@ -310,6 +344,14 @@ public class MeshGenerator : MonoBehaviour
                         clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
                         clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
                         allForrests.Add(clone);
+                        
+                        foreach (Transform child in clone.transform)
+                        {
+                            if (child.CompareTag("Plant"))
+                            {
+                                herbivoreFood.Add(child.gameObject, true);
+                            }
+                        }
                     }
                 }
             }
@@ -329,18 +371,15 @@ public class MeshGenerator : MonoBehaviour
                 if (randomInt == 0)
                 {
                     GameObject clone = Instantiate(objectToSpawn, objectToSpawn.transform.position, Quaternion.identity, stegosaurusContainer.transform);
-                    clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
                     clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
                     clone.name = $"Stegosaurus #{i}";
-                    allDinos.Add(clone.GetComponent<GAgent>());
+                    carnivoreFood.Add(clone, true);
                 }
                 else if (randomInt == 1)
                 {
                     GameObject clone = Instantiate(objectToSpawn, objectToSpawn.transform.position, Quaternion.identity, velociraptorContainer.transform);
-                    clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
                     clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
                     clone.name = $"Velociraptor #{i}";
-                    allDinos.Add(clone.GetComponent<GAgent>());
                 }
             }
             else
@@ -348,6 +387,8 @@ public class MeshGenerator : MonoBehaviour
                 Debug.LogWarning("No Dino prefabs found");
             }
         }
+        
+        targetManager.Initialize(herbivoreFood, carnivoreFood);
     }
 
     private Vector3 GetRandomInnerVertex()
@@ -388,20 +429,4 @@ public class MeshGenerator : MonoBehaviour
     {
         return vertices;
     }
-
-    private void UpdateMesh()
-    {
-        mesh.Clear();
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
-        mesh.colors = colors;
-        mesh.RecalculateTangents();
-        mesh.RecalculateNormals();
-
-
-        GetComponent<MeshCollider>().sharedMesh = mesh;
-        gameObject.transform.localScale = new Vector3(MESH_SCALE, MESH_SCALE, MESH_SCALE);
-        gameObject.layer = 13;
-    }
-
 }

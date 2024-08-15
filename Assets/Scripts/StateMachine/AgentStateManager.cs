@@ -14,12 +14,9 @@ public enum AgentGoal
 
 public class AgentStateManager : MonoBehaviour
 {
-    public Herbivore herbivore;
-    //public WorldStates worldStates;
-
+    public GAgent gAgent;
     private AgentBaseState currentState;
     public AgentGoal currentAgentGoal;
-    public NavMeshAgent navMeshAgent;
     
     public IdleState idleState = new IdleState();
     public EatingState eatingState = new EatingState();
@@ -27,14 +24,10 @@ public class AgentStateManager : MonoBehaviour
     public DrinkingState drinkingState = new DrinkingState();
     public Dictionary<string, int> states;
 
-    //KeyValuePair<string, int> highestState = new KeyValuePair<string, int>("", -1);
-    //KeyValuePair<string, int> prevHighestState = new KeyValuePair<string, int>("", -1);
-
     void Start()
     {
-        herbivore = GetComponent<Herbivore>();
-        navMeshAgent = GetComponent<NavMeshAgent>();
-        states = herbivore.worldStates.GetStates();
+        gAgent = GetComponent<GAgent>();
+        states = gAgent.worldStates.GetStates();
 
         SwitchState(idleState); // Start in the Idle state
     }
@@ -113,11 +106,11 @@ public class IdleState : AgentBaseState
         Debug.Log("Entering Idle State");
         stateManager.currentAgentGoal = AgentGoal.Idle;
 
-        stateManager.herbivore.goals.Clear();
+        stateManager.gAgent.goals.Clear();
 
         goal = new SubGoal("Idle", 1, false);
 
-        stateManager.herbivore.goals.Add(goal, 1);
+        stateManager.gAgent.goals.Add(goal, 1);
 
         //timer = wanderTimer; // Start the timer  
     }
@@ -155,11 +148,11 @@ public class IdleState : AgentBaseState
     {
         Debug.Log("Exiting Idle State");
 
-        goal = stateManager.herbivore.GetGoal("Idle");
+        goal = stateManager.gAgent.GetGoal("Idle");
 
         if (goal != null)
         {
-            stateManager.herbivore.goals.Remove(goal);
+            stateManager.gAgent.goals.Remove(goal);
         }
     }
     
@@ -182,7 +175,7 @@ public class EatingState : AgentBaseState
 
         goal = new SubGoal("Eat", 1, true);
         
-        stateManager.herbivore.goals.Add(goal, 1);
+        stateManager.gAgent.goals.Add(goal, 1);
     }
 
     public override void UpdateState(AgentStateManager stateManager)
@@ -197,11 +190,11 @@ public class EatingState : AgentBaseState
     {
         Debug.Log("Exiting Eating State");
 
-        goal = stateManager.herbivore.GetGoal("Eat");
+        goal = stateManager.gAgent.GetGoal("Eat");
 
         if (goal != null)
         {
-            stateManager.herbivore.goals.Remove(goal);
+            stateManager.gAgent.goals.Remove(goal);
         }
     }
 }
@@ -214,7 +207,7 @@ public class RestingState : AgentBaseState
         stateManager.currentAgentGoal = AgentGoal.Resting;
         
         goal = new SubGoal("Rest", 1, true);
-        stateManager.herbivore.goals.Add(goal, 1);
+        stateManager.gAgent.goals.Add(goal, 1);
     }
 
     public override void UpdateState(AgentStateManager stateManager)
@@ -228,11 +221,11 @@ public class RestingState : AgentBaseState
     public override void ExitState(AgentStateManager stateManager)
     {
         Debug.Log("Exiting Resting State");
-        goal = stateManager.herbivore.GetGoal("Rest");
+        goal = stateManager.gAgent.GetGoal("Rest");
         
         if (goal != null)
         {
-            stateManager.herbivore.goals.Remove(goal);
+            stateManager.gAgent.goals.Remove(goal);
         }
     }
 }
@@ -245,7 +238,7 @@ public class DrinkingState : AgentBaseState
         stateManager.currentAgentGoal = AgentGoal.Drinking;
         
         goal = new SubGoal("Drink", 1, true);
-        stateManager.herbivore.goals.Add(goal, 1);
+        stateManager.gAgent.goals.Add(goal, 1);
     }
 
     public override void UpdateState(AgentStateManager stateManager)
@@ -259,11 +252,11 @@ public class DrinkingState : AgentBaseState
     public override void ExitState(AgentStateManager stateManager)
     {
         Debug.Log("Exiting Drinking State");
-        goal = stateManager.herbivore.GetGoal("Drink");
+        goal = stateManager.gAgent.GetGoal("Drink");
         
         if (goal != null)
         {
-            stateManager.herbivore.goals.Remove(goal);
+            stateManager.gAgent.goals.Remove(goal);
         }
     }
 }
