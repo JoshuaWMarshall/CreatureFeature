@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
+using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class NPC : MonoBehaviour
@@ -14,11 +17,11 @@ public class NPC : MonoBehaviour
     public int maxRange = 100;
     private bool isRandom = false;
 
-
+    Stopwatch watch = new Stopwatch();
     private void FixedUpdate()
     {
        
-        
+        YRayCast();
         for(int i=0;i<Path.Count-1;++i)
         {
             Debug.DrawLine(
@@ -56,6 +59,7 @@ public class NPC : MonoBehaviour
              
                 } while (AstarPathFind.GetNode(newtarget).Wall);
 
+                
                 Path = AstarPathFind.FindPath(
                     new Vector2Int((int)transform.position.x, (int)transform.position.z),
                     newtarget);
@@ -71,20 +75,27 @@ public class NPC : MonoBehaviour
             {
 
                 // Calculate valid range for x
-                int minX = Mathf.Max(0, (int)transform.position.x - 100);
-                int maxX = Mathf.Min(AstarPathFind.gridWidth, (int)transform.position.x + 100);
+                int minX = Mathf.Max(0, (int)transform.position.x - maxRange);
+                int maxX = Mathf.Min(AstarPathFind.gridWidth, (int)transform.position.x + maxRange);
+                Math.Clamp(newtarget.x, 0, AstarPathFind.gridWidth);
                 newtarget.x = Random.Range(minX, maxX);
 
                 // Calculate valid range for y
-                int minY = Mathf.Max(0, (int)transform.position.z - 100);
-                int maxY = Mathf.Min(AstarPathFind.gridHeight, (int)transform.position.z + 100);
+                int minY = Mathf.Max(0, (int)transform.position.z - maxRange);
+                int maxY = Mathf.Min(AstarPathFind.gridHeight, (int)transform.position.z + maxRange);
+                Math.Clamp(newtarget.y, 0, AstarPathFind.gridWidth);
                 newtarget.y = Random.Range(minY, maxY);
-            }while (AstarPathFind.GetNode(newtarget).Wall);
 
+               
+                
+            }while (AstarPathFind.GetNode(newtarget).Wall);
+            watch.Reset();
+            watch.Start();
             Path = AstarPathFind.FindPath(
                 new Vector2Int((int)transform.position.x, (int)transform.position.z),
                 newtarget);
-          
+            watch.Stop();
+            Debug.Log(watch.Elapsed);
         }
         if (Path.Count != 0)
         {
@@ -107,9 +118,10 @@ public class NPC : MonoBehaviour
                     Path[Path.Count - 1].x + AstarPathFind.cellSize * 0.5f, 
                     0.5f, 
                     Path[Path.Count - 1].y + AstarPathFind.cellSize * 0.5f);
-                GetComponent<Rigidbody>().velocity = (target - transform.position).normalized * speed;
                 // Calculate the direction to the target
                 Vector3 direction = (target - transform.position).normalized;
+                direction.y = 0; // Set the y component to 0 to only affect x and z axes
+                GetComponent<Rigidbody>().velocity = direction * speed;
 
                 // Calculate the rotation angle in degrees
                 float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
@@ -131,13 +143,14 @@ public class NPC : MonoBehaviour
 
     void Update()
     {
-        YRayCast();
+       
     }
 
     public void YRayCast()
     {
+       
         RaycastHit hit;
-        int layerMask = ~(1 << 14); // Ignore layer 14
+        int layerMask = ~(1 << 14) & ~(1 << 15); // Ignore layer 14 and 15
         Vector3 raySpot = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         float rayY = transform.position.y + 100;
         raySpot.y = rayY;
