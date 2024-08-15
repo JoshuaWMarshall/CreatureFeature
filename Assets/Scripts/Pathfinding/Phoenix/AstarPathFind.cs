@@ -33,8 +33,6 @@ public class AstarPathFind : MonoBehaviour
     public static Node2[,] Nodes;
     List<GameObject> rocks = new List<GameObject>();
     List<GameObject> plants = new List<GameObject>();
-    public static Stopwatch watch = new Stopwatch();
-    private static List<Vector3> lines = new List<Vector3>();
     // Start is called before the first frame update
     void Start()
     {
@@ -66,11 +64,6 @@ public class AstarPathFind : MonoBehaviour
         // {
         //     Debug.DrawLine(new Vector3(x, 0.1f, 0), new Vector3(x, 0.1f, gridHeight));
         // }
-
-        foreach (var l in lines)
-        {
-            Debug.DrawLine(l,l+new Vector3(0,1000,0));
-        }
     }
 
     public static Node2 GetNode(Vector2Int pos)
@@ -98,8 +91,6 @@ public class AstarPathFind : MonoBehaviour
             new Vector2Int(1, -1)
         };
 
-        watch.Reset();
-        watch.Start();
         minCorner.x--;
         maxCorner.x++;
         minCorner.y--;
@@ -120,9 +111,7 @@ public class AstarPathFind : MonoBehaviour
     minCorner = new Vector2Int(gridWidth-1, gridHeight-1);
     maxCorner = new Vector2Int(0, 0);
 
-
-        watch.Stop();
-        Debug.Log("Clear Time: "+watch.Elapsed);
+    
         // A* goes here
         List<Vector2Int> openList = new List<Vector2Int>();
 
@@ -132,16 +121,9 @@ public class AstarPathFind : MonoBehaviour
 
         GetNode(start).state = Node2.State.Open;
         GetNode(start).G = 0;
-        int maxsize = 0;
-        int iterations = 0;
         Merge(start.x,start.y);
-        watch.Reset();
-        watch.Start();
         while (openList.Count > 0)
         {
-            iterations++;
-            if (openList.Count > maxsize)
-                maxsize = openList.Count;
             Vector2Int lowestFCoord = openList[0];
             int lowestF = GetNode(lowestFCoord).F;
             int lowestFIndex = 0;
@@ -199,34 +181,6 @@ public class AstarPathFind : MonoBehaviour
             }
             if(GetNode(end).state == Node2.State.Closed)
             {
-                if (Input.GetKey(KeyCode.P))
-                {
-                    lines.Clear();
-                    for (int y = 0; y < gridHeight; ++y)
-                    {
-                        for (int x = 0; x < gridWidth; ++x)
-                        {
-                            if (Nodes[x, y].state == Node2.State.Closed)
-                            {
-                                lines.Add(new Vector3(x+0.5f,0,y+0.5f));
-                            }
-                        }
-                    }
-                }
-                if (Input.GetKey(KeyCode.O))
-                {
-                    lines.Clear();
-                    for (int y = 0; y < gridHeight; ++y)
-                    {
-                        for (int x = 0; x < gridWidth; ++x)
-                        {
-                            if (Nodes[x, y].state == Node2.State.Open)
-                            {
-                                lines.Add(new Vector3(x+0.5f,0,y+0.5f));
-                            }
-                        }
-                    }
-                }
                 List<Vector2Int> path = new List<Vector2Int>();
                 Vector2Int backtrsckCoord = end;
                 while(backtrsckCoord.x != -1)
@@ -234,8 +188,6 @@ public class AstarPathFind : MonoBehaviour
                     path.Add(backtrsckCoord);
                     backtrsckCoord = GetNode(backtrsckCoord).Parent;
                 }
-                watch.Stop();
-                Debug.Log("Time: "+watch.Elapsed);
                 
                 return path;
             }
