@@ -229,7 +229,7 @@ public class AstarPathFind : MonoBehaviour
             }
             else
             {
-                Debug.LogError("Index out of bounds Rock: (" + xIndex + ", " + zIndex + ") Phoenix Made Error");
+                //Debug.LogError("Index out of bounds Rock: (" + xIndex + ", " + zIndex + ") Phoenix Made Error");
                 Destroy(i);
             }
         }
@@ -252,7 +252,7 @@ public class AstarPathFind : MonoBehaviour
             }
             else
             {
-                Debug.LogError("Index out of bounds Plant: (" + xIndex + ", " + zIndex + ") Phoenix Made Error");
+                //Debug.LogError("Index out of bounds Plant: (" + xIndex + ", " + zIndex + ") Phoenix Made Error");
                 Destroy(i);
             }
         }

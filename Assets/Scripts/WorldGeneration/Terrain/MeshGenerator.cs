@@ -4,8 +4,8 @@ using System.Linq;
 using UnityEngine;
 using Unity.AI.Navigation;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 
-[RequireComponent(typeof(MeshFilter))]
 public class MeshGenerator : MonoBehaviour
 {
     public TargetManager targetManager;
@@ -28,7 +28,7 @@ public class MeshGenerator : MonoBehaviour
     public int xSize;
     public int zSize;
 
-    public float scale; 
+    public float noiseScale; 
     public int octaves;
     public float lacunarity;
 
@@ -79,7 +79,7 @@ public class MeshGenerator : MonoBehaviour
         if (zSize <= 0) zSize = 50;
         if (octaves <= 0) octaves = 5;
         if (lacunarity <= 0) lacunarity = 2;
-        if (scale <= 0) scale = 50;
+        if (noiseScale <= 0) noiseScale = 50;
     } 
 
     public void GenerateWorld()
@@ -135,7 +135,7 @@ public class MeshGenerator : MonoBehaviour
         // Creates seed
         Vector2[] octaveOffsets = GetOffsetSeed();
 
-        if (scale <= 0) scale = 0.0001f;
+        if (noiseScale <= 0) noiseScale = 0.0001f;
             
         // Create vertices
         vertices = new Vector3[(xSize + 1) * (zSize + 1)];
@@ -199,7 +199,7 @@ public class MeshGenerator : MonoBehaviour
     {
         if (randomiseSeed)
         {
-            seed = Random.Range(0, 1000);
+            seed = Random.Range(0, 100000);
         }
  
         // changes area of map
@@ -224,8 +224,8 @@ public class MeshGenerator : MonoBehaviour
         // loop over octaves
         for (int y = 0; y < octaves; y++)
         {
-            float mapZ = z / scale * frequency + octaveOffsets[y].y;
-            float mapX = x / scale * frequency + octaveOffsets[y].x;
+            float mapZ = z / noiseScale * frequency + octaveOffsets[y].y;
+            float mapX = x / noiseScale * frequency + octaveOffsets[y].x;
 
             //The *2-1 is to create a flat floor level
             float perlinValue = (Mathf.PerlinNoise(mapZ, mapX)) * 2 - 1;
@@ -323,40 +323,40 @@ public class MeshGenerator : MonoBehaviour
 
     public void MapEmbellishments()
     {
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            // find actual position of vertices in the game
-            Vector3 worldPt = transform.TransformPoint(mesh.vertices[i]);
-            var noiseHeight = worldPt.y;
-            // Stop generation if height difference between 2 vertices is too steep
-            if (System.Math.Abs(lastNoiseHeight - worldPt.y) < 25)
-            {
-                // min height for object generation
-                if (noiseHeight > waterHeight + 0.1f)
-                {
-                    // Chance to generate trees
-                    if (Random.Range(1, 5) == 1)
-                    {
-                        GameObject objectToSpawn = objects[Random.Range(0, objects.Length)];
-                        var spawnAboveTerrainBy = noiseHeight * 2;
-                        GameObject clone = Instantiate(objectToSpawn, new Vector3(mesh.vertices[i].x * MESH_SCALE, spawnAboveTerrainBy, mesh.vertices[i].z * MESH_SCALE), Quaternion.identity, embelishmentsContainer.transform);
-
-                        clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
-                        clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
-                        allForrests.Add(clone);
-                        
-                        foreach (Transform child in clone.transform)
-                        {
-                            if (child.CompareTag("Plant"))
-                            {
-                                herbivoreFood.Add(child.gameObject, true);
-                            }
-                        }
-                    }
-                }
-            }
-            lastNoiseHeight = noiseHeight;
-        }
+        // for (int i = 0; i < vertices.Length; i++)
+        // {
+        //     // find actual position of vertices in the game
+        //     Vector3 worldPt = transform.TransformPoint(mesh.vertices[i]);
+        //     var noiseHeight = worldPt.y;
+        //     // Stop generation if height difference between 2 vertices is too steep
+        //     if (System.Math.Abs(lastNoiseHeight - worldPt.y) < 25)
+        //     {
+        //         // min height for object generation
+        //         if (noiseHeight > waterHeight + 0.1f)
+        //         {
+        //             // Chance to generate trees
+        //             if (Random.Range(1, 5) == 1)
+        //             {
+        //                 GameObject objectToSpawn = objects[Random.Range(0, objects.Length)];
+        //                 var spawnAboveTerrainBy = noiseHeight * 2;
+        //                 GameObject clone = Instantiate(objectToSpawn, new Vector3(mesh.vertices[i].x * MESH_SCALE, spawnAboveTerrainBy, mesh.vertices[i].z * MESH_SCALE), Quaternion.identity, embelishmentsContainer.transform);
+        //
+        //                 clone.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
+        //                 clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
+        //                 allForrests.Add(clone);
+        //                 
+        //                 foreach (Transform child in clone.transform)
+        //                 {
+        //                     if (child.CompareTag("Plant"))
+        //                     {
+        //                         herbivoreFood.Add(child.gameObject, true);
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     lastNoiseHeight = noiseHeight;
+        // }
 
         for (int i = 0; i <= maxDinos; i++)
         {
@@ -388,7 +388,7 @@ public class MeshGenerator : MonoBehaviour
             }
         }
         
-        targetManager.Initialize(herbivoreFood, carnivoreFood);
+        //targetManager.Initialize(herbivoreFood, carnivoreFood);
     }
 
     private Vector3 GetRandomInnerVertex()
@@ -428,5 +428,10 @@ public class MeshGenerator : MonoBehaviour
     public Vector3[] GetVertices()
     {
         return vertices;
+    }
+
+    public Vector3[] GetNormals()
+    {
+        return mesh.normals;
     }
 }

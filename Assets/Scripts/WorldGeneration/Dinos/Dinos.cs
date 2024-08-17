@@ -4,19 +4,13 @@ using UnityEngine;
 
 public class Dinos : Objects
 {
-    public MeshGenerator meshGenerator;
-    private GAgent gAgent;
+    //private GAgent gAgent;
     public override void Start()
     {
-        if (meshGenerator == null)
-        {
-            meshGenerator = FindObjectOfType<MeshGenerator>();
-        }
-
-        if (gAgent == null)
-        {
-            gAgent = GetComponent<GAgent>();
-        }
+        // if (gAgent == null)
+        // {
+        //     gAgent = GetComponent<GAgent>();
+        // }
         
         
         Invoke("FindLand", 0.1f);
@@ -41,24 +35,20 @@ public class Dinos : Objects
             foundLand = true;
         }
         
-        if (foundLand)
-        {
-            // Check if the object is below the water height
-            if (transform.position.y <= waterHeight)
-            {
-                //Debug.Log("Object is below water");
-                Destroy(gameObject);
-              
-            }
-            else
-            {
-                meshGenerator.allDinos.Add(gAgent);
-            }
-        }
-        else
-        {
-            // Didnt find any mesh to place on
-            Destroy(gameObject);
-        }
+        // if (foundLand)
+        // {
+        //     // Check if the object is below the water height
+        //     if (transform.position.y <= waterHeight)
+        //     {
+        //         //Debug.Log("Object is below water");
+        //         Destroy(gameObject);
+        //       
+        //     }
+        // }
+        // else
+        // {
+        //     // Didnt find any mesh to place on
+        //     Destroy(gameObject);
+        // }
     }
 }
