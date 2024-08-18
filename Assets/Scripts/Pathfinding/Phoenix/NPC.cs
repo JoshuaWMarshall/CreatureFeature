@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
 using Debug = UnityEngine.Debug;
@@ -16,11 +15,15 @@ public class NPC : MonoBehaviour
     public float currentDistance;
     public int maxRange = 100;
     private bool isRandom = false;
-
-    Stopwatch watch = new Stopwatch();
+    
     private void FixedUpdate()
     {
        
+       
+    }
+
+    void Update()
+    {
         YRayCast();
         for(int i=0;i<Path.Count-1;++i)
         {
@@ -89,13 +92,9 @@ public class NPC : MonoBehaviour
                
                 
             }while (AstarPathFind.GetNode(newtarget).Wall);
-            watch.Reset();
-            watch.Start();
             Path = AstarPathFind.FindPath(
                 new Vector2Int((int)transform.position.x, (int)transform.position.z),
                 newtarget);
-            watch.Stop();
-            Debug.Log(watch.Elapsed);
         }
         if (Path.Count != 0)
         {
@@ -121,7 +120,7 @@ public class NPC : MonoBehaviour
                 // Calculate the direction to the target
                 Vector3 direction = (target - transform.position).normalized;
                 direction.y = 0; // Set the y component to 0 to only affect x and z axes
-                GetComponent<Rigidbody>().velocity = direction * speed;
+                GetComponent<Rigidbody>().velocity = direction * speed * Time.deltaTime;
 
                 // Calculate the rotation angle in degrees
                 float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
@@ -141,21 +140,16 @@ public class NPC : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-       
-    }
-
     public void YRayCast()
     {
        
         RaycastHit hit;
         int layerMask = ~(1 << 14) & ~(1 << 15); // Ignore layer 14 and 15
         Vector3 raySpot = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        float rayY = transform.position.y + 100;
+        float rayY = transform.position.y + 1000;
         raySpot.y = rayY;
 
-        if (Physics.Raycast(raySpot, Vector3.down, out hit, Mathf.Infinity, layerMask))
+        if (Physics.Raycast(raySpot, Vector3.down, out hit, 1100, layerMask))
         {
           //  Debug.Log("Raycast hit " + hit.point);
             transform.position = new Vector3(transform.position.x, hit.point.y, transform.position.z);

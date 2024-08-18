@@ -11,11 +11,13 @@ public class Objects : MonoBehaviour
     {
         Invoke("FindLand", 0.1f);
 
-        //FindLand();
+        FindLand();
     }
 
     public virtual void FindLand()
     {
+        transform.position += new Vector3(0, 100, 0);
+        
         Ray rayDown = new Ray(transform.position, Vector3.down);
         Ray rayUp = new Ray(transform.position, Vector3.up);
         RaycastHit hitInfo;
@@ -33,19 +35,19 @@ public class Objects : MonoBehaviour
             foundLand = true;
         }
         
-        if (foundLand)
-        {
-            // Check if the object is below the water height
-            if (transform.position.y <= waterHeight)
-            {
-                //Debug.Log("Object is below water");
-                Destroy(gameObject);
-            }
-        }
-        else
-        {
-            // Didnt find any mesh to place on
-            Destroy(gameObject);
-        }
+        // if (foundLand)
+        // {
+        //     // Check if the object is below the water height
+        //     if (transform.position.y <= waterHeight)
+        //     {
+        //         //Debug.Log("Object is below water");
+        //         Destroy(gameObject);
+        //     }
+        // }
+        // else
+        // {
+        //     // Didnt find any mesh to place on
+        //     Destroy(gameObject);
+        // }
     }
 }

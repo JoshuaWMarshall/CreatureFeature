@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.Mathematics;
 
 [CustomEditor(typeof(MeshGenerator))]
 public class MeshGeneratorEditor : Editor
@@ -35,6 +36,7 @@ public class MeshGeneratorEditor : Editor
         {
             LoadGame();
         }
+        
     }
 
     private void Generate()

@@ -17,6 +17,8 @@ TagManager:
   - RaptorContainer
   - Rocks
   - Forrest
+  - TreeContainer
+  - RestAreaContainer
   layers:
   - Default
   - TransparentFX

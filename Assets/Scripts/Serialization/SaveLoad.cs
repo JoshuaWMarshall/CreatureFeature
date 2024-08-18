@@ -21,7 +21,7 @@ public class SaveLoad : MonoBehaviour
             waterHeight = meshGen.waterHeight,
             xSize = meshGen.xSize,
             zSize = meshGen.zSize,
-            scale = meshGen.scale,
+            scale = meshGen.noiseScale,
             octaves = meshGen.octaves,
             lacunarity = meshGen.lacunarity,
             meshScale = meshGen.MESH_SCALE,
@@ -68,7 +68,7 @@ public class SaveLoad : MonoBehaviour
         meshGen.waterHeight = saveData.waterHeight;
         meshGen.xSize = saveData.xSize;
         meshGen.zSize = saveData.zSize;
-        meshGen.scale = saveData.scale;
+        meshGen.noiseScale = saveData.scale;
         meshGen.octaves = saveData.octaves;
         meshGen.lacunarity = saveData.lacunarity;
         meshGen.MESH_SCALE = saveData.meshScale;

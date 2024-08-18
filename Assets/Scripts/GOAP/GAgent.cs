@@ -8,11 +8,11 @@ public class SubGoal
     public Dictionary<string, int> sgoals;
     public bool remove;
 
-    public SubGoal(string s, int i, bool r)
+    public SubGoal(string subGoal, int i, bool remove)
     {
         sgoals = new Dictionary<string, int>();
-        sgoals.Add(s, i);
-        remove = r;
+        sgoals.Add(subGoal, i);
+        this.remove = remove;
     }
 }
 public class GAgent : MonoBehaviour
