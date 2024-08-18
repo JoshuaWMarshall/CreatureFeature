@@ -9,7 +9,8 @@ public class TreePlacementEditor : EditorWindow
    private TreePlacementData data;
    public TreePlacement treePlacement;
    private TerrainGeneration terrainGeneration;
-   private GameObject prefab;
+   private GameObject treePrefab;
+   private GameObject restAreaPrefab;
 
    
    private int newSeed;
@@ -50,7 +51,6 @@ public class TreePlacementEditor : EditorWindow
       {
          treePlacement = FindObjectOfType<TreePlacement>();
          terrainGeneration = FindObjectOfType<TerrainGeneration>();
-         data.parent = GameObject.Find("Tree Container").transform;
       }
       
       data.noiseMap =
@@ -72,14 +72,17 @@ public class TreePlacementEditor : EditorWindow
       data.randomness = EditorGUILayout.Slider("Randomness", data.randomness, 0, 1);
       data.maxSteepness = EditorGUILayout.Slider("Max Steepness", data.maxSteepness, 0, 90);
 
-      prefab = (GameObject)EditorGUILayout.ObjectField("Tree Prefab", prefab, typeof(GameObject), false);
-
+      treePrefab = (GameObject)EditorGUILayout.ObjectField("Tree Prefab", treePrefab, typeof(GameObject), false);
+      restAreaPrefab =
+         (GameObject)EditorGUILayout.ObjectField("Rest Area Prefab", restAreaPrefab, typeof(GameObject), false);
+      
+      
       if (GUILayout.Button("Place Trees"))
       {
          TerrainGenerationData terrainGenerationData = TerrainGenerationData.Load(terrainSaveName);
          
          treePlacement.ClearTrees(data);
-         treePlacement.PlaceTrees(data, terrainGeneration, terrainGenerationData, prefab);
+         treePlacement.PlaceTrees(data, terrainGeneration, terrainGenerationData, treePrefab, restAreaPrefab);
       }
 
       if (GUILayout.Button("Clear Trees"))

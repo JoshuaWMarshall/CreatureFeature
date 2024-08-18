@@ -75,24 +75,30 @@ public class UiController : MonoBehaviour
     
     private void FindDinosInScene()
     {
-        if (stegosaurusContainer.transform.childCount > 0)
+        if (stegosaurusContainer != null)
         {
-            stegosaurus = new List<GameObject>();
-            
-            foreach (Transform child in stegosaurusContainer.transform)
+            if (stegosaurusContainer.transform.childCount > 0)
             {
-                stegosaurus.Add(child.gameObject);
+                stegosaurus = new List<GameObject>();
+            
+                foreach (Transform child in stegosaurusContainer.transform)
+                {
+                    stegosaurus.Add(child.gameObject);
+                }
             }
         }
 
-        if (velociraptorContainer.transform.childCount > 0)
+        if (velociraptorContainer != null)
         {
-            velociraptor = new List<GameObject>();
-
-            foreach (Transform child in velociraptorContainer.transform)
+            if (velociraptorContainer.transform.childCount > 0)
             {
-                velociraptor.Add(child.gameObject);
-            } 
+                velociraptor = new List<GameObject>();
+
+                foreach (Transform child in velociraptorContainer.transform)
+                {
+                    velociraptor.Add(child.gameObject);
+                } 
+            }
         }
     }
 }

@@ -43,8 +43,8 @@ public class TerrainGenerationEditor : EditorWindow
             terrainGeneration = FindObjectOfType<TerrainGeneration>();
         }
         
-        selectedTerrainTypeIndex = EditorGUILayout.Popup("Terrain Presets", selectedTerrainTypeIndex, terrainTypes);
-        SetTerrainTypeValues(selectedTerrainTypeIndex);
+        //selectedTerrainTypeIndex = EditorGUILayout.Popup("Terrain Presets", selectedTerrainTypeIndex, terrainTypes);
+        //SetTerrainTypeValues(selectedTerrainTypeIndex);
         
         // Monitor changes in terrain properties
         EditorGUI.BeginChangeCheck();

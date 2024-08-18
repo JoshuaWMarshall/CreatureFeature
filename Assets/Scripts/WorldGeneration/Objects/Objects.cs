@@ -16,6 +16,8 @@ public class Objects : MonoBehaviour
 
     public virtual void FindLand()
     {
+        transform.position += new Vector3(0, 100, 0);
+        
         Ray rayDown = new Ray(transform.position, Vector3.down);
         Ray rayUp = new Ray(transform.position, Vector3.up);
         RaycastHit hitInfo;

@@ -49,8 +49,6 @@ public class DinosaurPlacementEditor : EditorWindow
         {
             terrainGeneration = FindObjectOfType<TerrainGeneration>();
             dinosaurPlacement = FindObjectOfType<DinosaurPlacement>();
-            data.stegoContainer = GameObject.Find("StegosaurusContainer").transform;
-            data.raptorContainer = GameObject.Find("VelociraptorContainer").transform;
         }
         
         stegoPrefab = (GameObject)EditorGUILayout.ObjectField("Stegosaurus Prefab", stegoPrefab, typeof(GameObject), false);

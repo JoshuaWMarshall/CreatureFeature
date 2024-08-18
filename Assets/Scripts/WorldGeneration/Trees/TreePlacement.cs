@@ -8,7 +8,9 @@ using UnityEngine.Serialization;
 public class TreePlacement : MonoBehaviour
 {
     private TargetManager targetManager;
-    private Dictionary<GameObject, bool> herbivoreFood = new Dictionary<GameObject, bool>(); 
+    private Dictionary<GameObject, bool> herbivoreFood = new Dictionary<GameObject, bool>();
+    private GameObject restAreaContainer;
+    private GameObject treeContainer;
     private void Start()
     {
         if (targetManager == null)
@@ -19,7 +21,7 @@ public class TreePlacement : MonoBehaviour
         targetManager.InitializeHerbivoreFoodDict(herbivoreFood);
     }
 
-    public void PlaceTrees(TreePlacementData data, TerrainGeneration terrainGeneration, TerrainGenerationData terrainGenerationData, GameObject treePrefab)
+    public void PlaceTrees(TreePlacementData data, TerrainGeneration terrainGeneration, TerrainGenerationData terrainGenerationData, GameObject treePrefab, GameObject restAreaPrefab)
     {
         ClearTrees(data);
 
@@ -33,9 +35,29 @@ public class TreePlacement : MonoBehaviour
                 Vector3 pos = new Vector3(vertices[i].x + Random.Range(-data.randomness, data.randomness),
                     vertices[i].y,  vertices[i].z + Random.Range(-data.randomness, data.randomness)) * terrainGenerationData.meshScale;
                 
-                GameObject clone = Instantiate(treePrefab, pos, Quaternion.identity, data.parent);
+                if (treeContainer == null)
+                {
+                    treeContainer = new GameObject();
+                    treeContainer.name = "Tree Container";
+                    treeContainer.tag = "TreeContainer";
+                }
+                
+                GameObject clone = Instantiate(treePrefab, pos, Quaternion.identity, treeContainer.transform);
                 clone.name = $"Poplar Tree #{i}";
                 herbivoreFood.Add(clone, true);
+
+                if (Random.Range(0, 5) < 1)
+                {
+                    if (restAreaContainer == null)
+                    {
+                        restAreaContainer = new GameObject();
+                        restAreaContainer.name = "Rest Area Container";
+                        restAreaContainer.tag = "RestAreaContainer";
+                    }
+                    
+                    GameObject restArea = Instantiate(restAreaPrefab, pos + new Vector3(Random.Range(-1, 1), 0, Random.Range(-1, 1)),
+                        Quaternion.identity, restAreaContainer.transform);
+                }
             }
         }
         
@@ -43,16 +65,22 @@ public class TreePlacement : MonoBehaviour
         {
             targetManager = FindObjectOfType<TargetManager>();
         }
-        
-        
     }
     public void ClearTrees(TreePlacementData data)
     {
-        // clear any active children to avoid duplicates
-        while (data.parent.childCount != 0)
+        if (restAreaContainer == null)
         {
-            DestroyImmediate(data.parent.GetChild(0).gameObject);
+            restAreaContainer = GameObject.FindGameObjectWithTag("RestAreaContainer");
         }
+
+        if (treeContainer == null)
+        {
+            treeContainer = GameObject.FindGameObjectWithTag("TreeContainer");
+        }
+        
+        DestroyImmediate(treeContainer);
+        
+        DestroyImmediate(restAreaContainer);
 
         if (herbivoreFood.Count > 0)
         {
@@ -113,7 +141,6 @@ public struct TreePlacementData
     public float intensity;
     [FormerlySerializedAs("uniformity")] public float randomness;
     public float maxSteepness;
-    public Transform parent;
     
     public static TreePlacementData Load(string saveName)
     {
@@ -131,8 +158,6 @@ public struct TreePlacementData
                 intensity = 0.5f,
                 randomness = 0.5f,
                 maxSteepness = 30f,
-         
-                parent = GameObject.Find("Tree Container").transform
             };
         }
         else

@@ -9,6 +9,10 @@ public class DinosaurPlacement : MonoBehaviour
     private Dictionary<GameObject, bool> carnivoreFood = new Dictionary<GameObject, bool>(); 
     private List<GAgent> allDinos = new List<GAgent>();
     private int vertexIndex;
+
+    private GameObject stegoContainer;
+    private GameObject raptorContainer;
+    
     
     private TargetManager targetManager;
     private void Start()
@@ -45,7 +49,15 @@ public class DinosaurPlacement : MonoBehaviour
 
             if (stegoPrefab!= null)
             {
-                GameObject clone = Instantiate(stegoPrefab,  worldPt, Quaternion.identity, data.stegoContainer);
+                if (stegoContainer == null)
+                {
+                    stegoContainer = new GameObject();
+                    stegoContainer.name = "Stegosaurus Container";
+                    stegoContainer.tag = "StegoContainer";
+                }
+                
+
+                GameObject clone = Instantiate(stegoPrefab,  worldPt, Quaternion.identity, stegoContainer.transform);
                 carnivoreFood.Add(clone, true);
             
                 clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
@@ -79,7 +91,14 @@ public class DinosaurPlacement : MonoBehaviour
 
             if (raptorPrefab != null)
             {
-                GameObject clone = Instantiate(raptorPrefab, worldPt, Quaternion.identity, data.raptorContainer);
+                if (raptorContainer == null)
+                {
+                    raptorContainer = new GameObject();
+                    raptorContainer.name = "Velociraptor Container";
+                    raptorContainer.tag = "RaptorContainer";
+                }
+                
+                GameObject clone = Instantiate(raptorPrefab, worldPt, Quaternion.identity, raptorContainer.transform);
             
                 clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
                 clone.name = $"Velociraptor #{i}";
@@ -90,16 +109,19 @@ public class DinosaurPlacement : MonoBehaviour
 
     public void ClearDinos(DinosaurPlacementData data)
     {
-        // clear any active children to avoid duplicates
-        while (data.stegoContainer.childCount != 0)
+        if (stegoContainer == null)
         {
-            DestroyImmediate(data.stegoContainer.GetChild(0).gameObject);
+            stegoContainer = GameObject.FindGameObjectWithTag("StegoContainer");
         }
         
-        while (data.raptorContainer.childCount != 0)
+        if (raptorContainer == null)
         {
-            DestroyImmediate(data.raptorContainer.GetChild(0).gameObject);
+            raptorContainer = GameObject.FindGameObjectWithTag("RaptorContainer");
         }
+        
+        DestroyImmediate(stegoContainer);
+        
+        DestroyImmediate(raptorContainer);
 
         if (carnivoreFood.Count > 0)
         {
@@ -178,8 +200,6 @@ public class DinosaurPlacement : MonoBehaviour
 [Serializable]
 public struct DinosaurPlacementData
 {
-    public Transform stegoContainer;
-    public Transform raptorContainer;
     public int maxStegosaurus;
     public int maxVelociraptors;
     public static DinosaurPlacementData Load(string saveName)
@@ -191,8 +211,8 @@ public struct DinosaurPlacementData
         {
             data = new DinosaurPlacementData
             {
-                stegoContainer = GameObject.Find("StegosaurusContainer").transform,
-                raptorContainer = GameObject.Find("VelociraptorContainer").transform
+                maxStegosaurus = 10,
+                maxVelociraptors = 2
             };
         }
         else

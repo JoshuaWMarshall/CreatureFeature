@@ -208,7 +208,7 @@ MonoBehaviour:
   actionName: Resting
   cost: 1
   target: {fileID: 0}
-  targetTag: 
+  targetTag: RestArea
   duration: 5
   preConditions: []
   afterEffects:
