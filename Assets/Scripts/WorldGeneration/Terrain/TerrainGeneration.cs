@@ -5,12 +5,10 @@ using UnityEditor;
 public class TerrainGeneration : MonoBehaviour
 {
     private bool isTerrainGenerated = false;
-    public Mesh mesh;
+    [HideInInspector] public Mesh mesh;
     
     private Vector3[] vertices;
     private int[] triangles;
-    
-    
     
     private float minTerrainheight;
     private float maxTerrainheight;

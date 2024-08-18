@@ -6,17 +6,23 @@ using Random = UnityEngine.Random;
 
 public class DinosaurPlacement : MonoBehaviour
 {
-    public List<GAgent> allDinos = new List<GAgent>();
+    private Dictionary<GameObject, bool> carnivoreFood = new Dictionary<GameObject, bool>(); 
+    private List<GAgent> allDinos = new List<GAgent>();
     private int vertexIndex;
     
     private TargetManager targetManager;
     private void Start()
     {
+        if (targetManager == null)
+        {
+            targetManager = FindObjectOfType<TargetManager>();
+        }
         
+        targetManager.InitializeCarnivoreFoodDict(carnivoreFood);
     }
     
-    public void PlaceDinos(GameObject stegoPrefab, GameObject raptorPrefab, Dictionary<GameObject, bool> carnivoreFood,
-         TerrainGeneration terrainGeneration,  TerrainGenerationData terrainGenerationData, DinosaurPlacementData data)
+    public void PlaceDinos(GameObject stegoPrefab, GameObject raptorPrefab, TerrainGeneration terrainGeneration, 
+        TerrainGenerationData terrainGenerationData, DinosaurPlacementData data)
     {
         Vector3[] vertices = terrainGeneration.mesh.vertices;
 
@@ -82,7 +88,7 @@ public class DinosaurPlacement : MonoBehaviour
         }
     }
 
-    public void ClearDinos(DinosaurPlacementData data, Dictionary<GameObject, bool> carnivoreFood)
+    public void ClearDinos(DinosaurPlacementData data)
     {
         // clear any active children to avoid duplicates
         while (data.stegoContainer.childCount != 0)

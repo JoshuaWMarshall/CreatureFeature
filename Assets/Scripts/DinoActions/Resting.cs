@@ -9,8 +9,8 @@ public class Resting : GAction
    
    public override bool PrePerform()
    {
-      FindClosestRestArea();
-      return true;
+        //FindClosestRestArea();
+       return true;
    }
    public override bool PostPerform()
    {

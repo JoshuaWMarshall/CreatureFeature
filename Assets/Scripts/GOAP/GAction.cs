@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
+using UnityEditor.SceneManagement;
 
 public abstract class GAction : MonoBehaviour
 {
@@ -14,7 +14,9 @@ public abstract class GAction : MonoBehaviour
     public WorldState[] preConditions;
     public WorldState[] afterEffects;
     public NPC npc;
-    public MeshGenerator meshGenerator;
+    //public MeshGenerator meshGenerator;
+    protected TerrainGenerationData terrainGenerationData;
+    protected TerrainGeneration terrainGeneration;
     public GAgent gAgent;
     public TargetManager targetManager;
     public Dictionary<string, int> preconditions;
@@ -22,11 +24,17 @@ public abstract class GAction : MonoBehaviour
     
     public bool running = false;
 
+    private static string terrainSaveName
+    {
+        get { return $"{Application.productName}_{EditorSceneManager.GetActiveScene().name}_TerrainData"; }
+    }
+    
     public virtual void Start()
     {
         npc = GetComponent<NPC>();
         targetManager = FindObjectOfType<TargetManager>();
-        meshGenerator = FindObjectOfType<MeshGenerator>();
+        terrainGenerationData = TerrainGenerationData.Load(terrainSaveName);
+        terrainGeneration = FindObjectOfType<TerrainGeneration>();
     }
 
     public GAction()

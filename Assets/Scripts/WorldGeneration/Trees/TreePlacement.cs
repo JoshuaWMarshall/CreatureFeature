@@ -8,10 +8,20 @@ using UnityEngine.Serialization;
 public class TreePlacement : MonoBehaviour
 {
     private TargetManager targetManager;
-
-    public void PlaceTrees(TreePlacementData data, TerrainGeneration terrainGeneration, TerrainGenerationData terrainGenerationData, Dictionary<GameObject, bool> herbivoreFood, GameObject treePrefab)
+    private Dictionary<GameObject, bool> herbivoreFood = new Dictionary<GameObject, bool>(); 
+    private void Start()
     {
-        ClearTrees(data, herbivoreFood);
+        if (targetManager == null)
+        {
+            targetManager = FindObjectOfType<TargetManager>();
+        }
+        
+        targetManager.InitializeHerbivoreFoodDict(herbivoreFood);
+    }
+
+    public void PlaceTrees(TreePlacementData data, TerrainGeneration terrainGeneration, TerrainGenerationData terrainGenerationData, GameObject treePrefab)
+    {
+        ClearTrees(data);
 
         Vector3[] vertices = terrainGeneration.mesh.vertices;
         
@@ -34,9 +44,9 @@ public class TreePlacement : MonoBehaviour
             targetManager = FindObjectOfType<TargetManager>();
         }
         
-        targetManager.InitializeherbivoreFoodDict(herbivoreFood);
+        
     }
-    public void ClearTrees(TreePlacementData data, Dictionary<GameObject, bool> herbivoreFood)
+    public void ClearTrees(TreePlacementData data)
     {
         // clear any active children to avoid duplicates
         while (data.parent.childCount != 0)

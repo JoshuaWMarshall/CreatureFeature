@@ -1116,7 +1116,6 @@ MonoBehaviour:
   - key: FoundFood
     value: 0
   npc: {fileID: 0}
-  meshGenerator: {fileID: 0}
   gAgent: {fileID: 0}
   targetManager: {fileID: 0}
   running: 0
@@ -1144,7 +1143,6 @@ MonoBehaviour:
   - key: Eat
     value: 0
   npc: {fileID: 0}
-  meshGenerator: {fileID: 0}
   gAgent: {fileID: 0}
   targetManager: {fileID: 0}
   running: 0
@@ -1164,14 +1162,13 @@ MonoBehaviour:
   actionName: Resting
   cost: 1
   target: {fileID: 0}
-  targetTag: RestArea
-  duration: 0
+  targetTag: 
+  duration: 3
   preConditions: []
   afterEffects:
   - key: Rest
     value: 0
   npc: {fileID: 0}
-  meshGenerator: {fileID: 0}
   gAgent: {fileID: 0}
   targetManager: {fileID: 0}
   running: 0
@@ -1198,7 +1195,6 @@ MonoBehaviour:
   - key: FoundWater
     value: 0
   npc: {fileID: 0}
-  meshGenerator: {fileID: 0}
   gAgent: {fileID: 0}
   targetManager: {fileID: 0}
   running: 0
@@ -1226,7 +1222,6 @@ MonoBehaviour:
   - key: Drink
     value: 0
   npc: {fileID: 0}
-  meshGenerator: {fileID: 0}
   gAgent: {fileID: 0}
   targetManager: {fileID: 0}
   running: 0
@@ -1253,7 +1248,6 @@ MonoBehaviour:
   - key: Idle
     value: 0
   npc: {fileID: 0}
-  meshGenerator: {fileID: 0}
   gAgent: {fileID: 0}
   targetManager: {fileID: 0}
   running: 0

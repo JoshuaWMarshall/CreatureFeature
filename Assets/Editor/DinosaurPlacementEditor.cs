@@ -13,8 +13,6 @@ public class DinosaurPlacementEditor : EditorWindow
     private GameObject stegoContainer;
     private GameObject raptorPrefab;
     private GameObject raptorContainer;
-
-    private Dictionary<GameObject, bool> carnivoreFood = new Dictionary<GameObject, bool>(); 
     
     private static string saveName
     {
@@ -64,12 +62,12 @@ public class DinosaurPlacementEditor : EditorWindow
         {
             TerrainGenerationData terrainGenerationData = TerrainGenerationData.Load(terrainSaveName);
             
-            dinosaurPlacement.PlaceDinos(stegoPrefab, raptorPrefab, carnivoreFood, terrainGeneration, terrainGenerationData, data);
+            dinosaurPlacement.PlaceDinos(stegoPrefab, raptorPrefab, terrainGeneration, terrainGenerationData, data);
         }
         
         if (GUILayout.Button("Clear Dinosaurs"))
         {
-            dinosaurPlacement.ClearDinos(data, carnivoreFood);
+            dinosaurPlacement.ClearDinos(data);
         }
     }
 }

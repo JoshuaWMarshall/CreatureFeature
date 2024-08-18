@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-
+using UnityEditor.SceneManagement;
 public class UiController : MonoBehaviour
 {
 
@@ -17,7 +17,13 @@ public class UiController : MonoBehaviour
 
     [HideInInspector] public GAgent currentDino;
     public CameraOrbit cameraOrbit;
-    public MeshGenerator meshGenerator;
+    public TerrainGenerationData terrainGenerationData;
+    
+    private static string terrainSaveName
+    {
+        get { return $"{Application.productName}_{EditorSceneManager.GetActiveScene().name}_TerrainData"; }
+    }
+    
     private void OnEnable()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
@@ -34,16 +40,11 @@ public class UiController : MonoBehaviour
     private void Start()
     {
         dinoViewerPresenter = new DinoViewerPresenter(root, this);
-        
+        terrainGenerationData = TerrainGenerationData.Load(terrainSaveName);
         // delayed so all dinos are finished spawning
         Invoke("InitDinoViewer", 1f);
     }
-
-    private void OnPostRender()
-    {
-        //InitDinoViewer();
-    }
-
+    
     private void Update()
     {
         if (currentDino != null)
@@ -69,7 +70,7 @@ public class UiController : MonoBehaviour
         // }
 
         dinoViewerPresenter.LoadDinoStats(0);
-        dinoViewerPresenter.seedNumber.text = "Seed: " + meshGenerator.seed;
+        dinoViewerPresenter.seedNumber.text = "Seed: " + terrainGenerationData.seed;
     }
     
     private void FindDinosInScene()

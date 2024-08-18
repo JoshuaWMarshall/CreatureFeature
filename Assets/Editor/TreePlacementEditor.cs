@@ -11,7 +11,7 @@ public class TreePlacementEditor : EditorWindow
    private TerrainGeneration terrainGeneration;
    private GameObject prefab;
 
-   private Dictionary<GameObject, bool> herbivoreFood = new Dictionary<GameObject, bool>(); 
+   
    private int newSeed;
    
    private static string treesSaveName
@@ -78,13 +78,13 @@ public class TreePlacementEditor : EditorWindow
       {
          TerrainGenerationData terrainGenerationData = TerrainGenerationData.Load(terrainSaveName);
          
-         treePlacement.ClearTrees(data, herbivoreFood);
-         treePlacement.PlaceTrees(data, terrainGeneration, terrainGenerationData, herbivoreFood, prefab);
+         treePlacement.ClearTrees(data);
+         treePlacement.PlaceTrees(data, terrainGeneration, terrainGenerationData, prefab);
       }
 
       if (GUILayout.Button("Clear Trees"))
       {
-         treePlacement.ClearTrees(data, herbivoreFood);
+         treePlacement.ClearTrees(data);
       }
    }
 }

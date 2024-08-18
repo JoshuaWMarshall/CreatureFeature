@@ -22,14 +22,9 @@ public class DrinkWater : GAction
 
     private void FindClosestWaterIntersection()
     {
-        if (meshGenerator == null)
-        {
-            Debug.LogError("MeshGenerator not found!");
-            return;
-        }
 
-        var vertices = meshGenerator.GetVertices();
-        var waterHeight = meshGenerator.waterHeight;
+        var vertices = terrainGeneration.mesh.vertices;
+        var waterHeight = terrainGenerationData.waterHeight;
         var closestPoint = Vector3.positiveInfinity;
         var closestDistance = Mathf.Infinity;
 
@@ -37,15 +32,15 @@ public class DrinkWater : GAction
 
         foreach (var vertex in vertices)
             // Determine if the vertex is close to the water height
-            if (Mathf.Abs(vertex.y * meshGenerator.MESH_SCALE - waterHeight) < 2f) // Threshold can be adjusted
+            if (Mathf.Abs(vertex.y * terrainGenerationData.meshScale - waterHeight) < 2f) // Threshold can be adjusted
             {
                 //Debug.Log($"Vertex near water height: {vertex}");
                 // Calculate the distance from the AI agent
-                var distance = Vector3.Distance(transform.position, vertex * meshGenerator.MESH_SCALE);
+                var distance = Vector3.Distance(transform.position, vertex * terrainGenerationData.meshScale);
                 if (distance < closestDistance)
                 {
                     closestDistance = distance;
-                    closestPoint = vertex * meshGenerator.MESH_SCALE;
+                    closestPoint = vertex * terrainGenerationData.meshScale;
                     //Debug.Log($"New closest point: {closestPoint}, Distance: {closestDistance}");
                 }
             }

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Herbivore : GAgent
 {
-   
     protected override void Start()
     {
         base.Start();

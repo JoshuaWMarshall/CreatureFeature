@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,24 +10,16 @@ public class TargetManager : MonoBehaviour
     public Dictionary<GameObject, bool> carnivoreFood;
 
     // Method to initialize the dictionaries
-    public void InitializeherbivoreFoodDict(Dictionary<GameObject, bool> herbivoreFoodDict)
+    public void InitializeHerbivoreFoodDict(Dictionary<GameObject, bool> herbivoreFoodDict)
     {
         herbivoreFood = herbivoreFoodDict;
         Debug.Log("Herbivore Food Targets Initialized:");
-        foreach (var food in herbivoreFood)
-        {
-            Debug.Log($"Target: {food.Key.name}, Available: {food.Value}");
-        }
     }
     // Method to initialize the dictionaries
     public void InitializeCarnivoreFoodDict(Dictionary<GameObject, bool> carnivoreFoodDict)
     {
         carnivoreFood = carnivoreFoodDict;
         Debug.Log("Carnivore Food Targets Initialized:");
-        foreach (var food in carnivoreFood)
-        {
-            Debug.Log($"Target: {food.Key.name}, Available: {food.Value}");
-        }
     }
     
     public void ReleaseHerbivoreTarget(GameObject target)
