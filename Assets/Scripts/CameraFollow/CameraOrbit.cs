@@ -4,26 +4,35 @@ using UnityEngine.InputSystem;
 
 public class CameraOrbit : MonoBehaviour
 {
+    // The target object that the camera will orbit around
     public GameObject target;
+    
+    // The initial distance from the target
     public float distance = 10.0f;
+    
+    // Sensitivity of the scroll wheel for zooming
     public float scrollSensitivity = 2f;
+    
+    // Minimum and maximum zoom distances
     public float minDistance = 20f; // Minimum zoom distance
     public float maxDistance = 500f; // Maximum zoom distance
 
+    // Speed of camera rotation around the target
     public float xSpeed = 250.0f;
     public float ySpeed = 120.0f;
 
+    // Limits for the vertical rotation angle
     public float yMinLimit = -20;
     public float yMaxLimit = 80;
 
+    // Current rotation angles
     private float x = 0.0f;
     private float y = 0.0f;
-
-    private float prevDistance;
 
     // Input Actions Asset
     public InputActionAsset inputActions;
 
+    // Input actions for zooming and mouse interactions
     private InputAction zoomAction;
     private InputAction leftClickAction;
     private InputAction rightClickAction;
@@ -42,6 +51,7 @@ public class CameraOrbit : MonoBehaviour
 
     private void OnEnable()
     {
+        // Enable input actions
         zoomAction.Enable();
         leftClickAction.Enable();
         rightClickAction.Enable();
@@ -50,6 +60,7 @@ public class CameraOrbit : MonoBehaviour
 
     private void OnDisable()
     {
+        // Disable input actions
         zoomAction.Disable();
         leftClickAction.Disable();
         rightClickAction.Disable();
@@ -58,6 +69,7 @@ public class CameraOrbit : MonoBehaviour
 
     void Start()
     {
+        // Initialize rotation angles based on the current transform
         var angles = transform.eulerAngles;
         x = angles.y;
         y = angles.x;
@@ -69,6 +81,7 @@ public class CameraOrbit : MonoBehaviour
         distance -= zoomAction.ReadValue<float>() * scrollSensitivity;
         distance = Mathf.Clamp(distance, minDistance, maxDistance);
 
+        // Rotate the camera around the target when the right mouse button is held down
         if (target && rightClickAction.ReadValue<float>() > 0)
         {
             Vector2 mouseDelta = mouseAction.ReadValue<Vector2>();
@@ -90,9 +103,9 @@ public class CameraOrbit : MonoBehaviour
             transform.position = position;
         }
 
+        // Update the camera position and rotation based on the target's position
         if (target)
         {
-            prevDistance = distance;
             var rot = Quaternion.Euler(y, x, 0);
             var po = rot * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
             transform.rotation = rot;
@@ -100,6 +113,7 @@ public class CameraOrbit : MonoBehaviour
         }
     }
 
+    // Clamp the angle between the specified minimum and maximum values
     static float ClampAngle(float angle, float min, float max)
     {
         if (angle < -360)
@@ -109,6 +123,7 @@ public class CameraOrbit : MonoBehaviour
         return Mathf.Clamp(angle, min, max);
     }
     
+    // Update the camera position based on mouse input
     public void UpdateCameraPosition()
     {
         Vector2 mouseDelta = mouseAction.ReadValue<Vector2>();

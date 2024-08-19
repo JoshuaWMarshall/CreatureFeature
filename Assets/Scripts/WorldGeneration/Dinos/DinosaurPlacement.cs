@@ -6,39 +6,52 @@ using Random = UnityEngine.Random;
 
 public class DinosaurPlacement : MonoBehaviour
 {
+    // Dictionary to keep track of carnivore food sources
     private Dictionary<GameObject, bool> carnivoreFood = new Dictionary<GameObject, bool>(); 
+    
+    // List to store all dinosaur agents
     private List<GAgent> allDinos = new List<GAgent>();
+    
+    // Index of the vertex being processed
     private int vertexIndex;
 
+    // Containers for different types of dinosaurs
     private GameObject stegoContainer;
     private GameObject raptorContainer;
     
-    
+    // Reference to the TargetManager
     private TargetManager targetManager;
+
     private void Start()
     {
+        // Initialize the TargetManager if it is not already set
         if (targetManager == null)
         {
             targetManager = FindObjectOfType<TargetManager>();
         }
         
+        // Initialize the carnivore food dictionary in the TargetManager
         targetManager.InitializeCarnivoreFoodDict(carnivoreFood);
     }
     
     public void PlaceDinos(GameObject stegoPrefab, GameObject raptorPrefab, TerrainGeneration terrainGeneration, 
         TerrainGenerationData terrainGenerationData, DinosaurPlacementData data)
     {
+        // Get the vertices of the terrain mesh
         Vector3[] vertices = terrainGeneration.mesh.vertices;
 
+        // Place Stegosaurus dinosaurs
         for (int i = 0; i < data.maxStegosaurus; i++)
         {
             Vector3 worldPt = Vector3.zero;
             bool validPosition = false;
 
+            // Find a valid position for the Stegosaurus
             while (!validPosition)
             {
                 Vector3 potentialPosition = GetRandomInnerVertex(vertices, terrainGenerationData.xSize, terrainGenerationData.zSize, out vertexIndex);
                 
+                // Check if the position is suitable for a herbivore
                 if (Fitness(potentialPosition, terrainGeneration.mesh, terrainGenerationData.meshScale,
                         30, terrainGenerationData.waterHeight, typeof(Herbivore)) >= 1)
                 {
@@ -47,7 +60,8 @@ public class DinosaurPlacement : MonoBehaviour
                 }
             }
 
-            if (stegoPrefab!= null)
+            // Check if the container is initialised, if not create one
+            if (stegoPrefab != null)
             {
                 if (stegoContainer == null)
                 {
@@ -55,9 +69,8 @@ public class DinosaurPlacement : MonoBehaviour
                     stegoContainer.name = "Stegosaurus Container";
                     stegoContainer.tag = "StegoContainer";
                 }
-                
-
-                GameObject clone = Instantiate(stegoPrefab,  worldPt, Quaternion.identity, stegoContainer.transform);
+                // Instantiate the Stegosaurus prefab at the valid position
+                GameObject clone = Instantiate(stegoPrefab, worldPt, Quaternion.identity, stegoContainer.transform);
                 carnivoreFood.Add(clone, true);
             
                 clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
@@ -66,21 +79,24 @@ public class DinosaurPlacement : MonoBehaviour
             }   
         }
 
+        // Ensure the TargetManager is initialized
         if (targetManager == null)
         {
             targetManager = FindObjectOfType<TargetManager>();
         }
         
-        targetManager.InitializeCarnivoreFoodDict(carnivoreFood);
-        
+        // Place Velociraptor dinosaurs
         for (int i = 0; i < data.maxVelociraptors; i++)
         {
             Vector3 worldPt = Vector3.zero;
             bool validPosition = false;
 
+            // Find a valid position for the Velociraptor
             while (!validPosition)
             {
                 Vector3 potentialPosition = GetRandomInnerVertex(vertices, terrainGenerationData.xSize, terrainGenerationData.zSize, out vertexIndex);
+                
+                // Check if the position is suitable for a carnivore
                 if (Fitness(potentialPosition, terrainGeneration.mesh, terrainGenerationData.meshScale,
                         30, terrainGenerationData.waterHeight, typeof(Carnivore)) >= 1)
                 {
@@ -89,6 +105,7 @@ public class DinosaurPlacement : MonoBehaviour
                 }
             }
 
+            // Check if the raptor container is initialised, if not create one
             if (raptorPrefab != null)
             {
                 if (raptorContainer == null)
@@ -97,7 +114,7 @@ public class DinosaurPlacement : MonoBehaviour
                     raptorContainer.name = "Velociraptor Container";
                     raptorContainer.tag = "RaptorContainer";
                 }
-                
+                // Instantiate the Velociraptor prefab at the valid position
                 GameObject clone = Instantiate(raptorPrefab, worldPt, Quaternion.identity, raptorContainer.transform);
             
                 clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
@@ -109,20 +126,20 @@ public class DinosaurPlacement : MonoBehaviour
 
     public void ClearDinos(DinosaurPlacementData data)
     {
+        // Find and destroy the Stegosaurus container if it exists
         if (stegoContainer == null)
         {
             stegoContainer = GameObject.FindGameObjectWithTag("StegoContainer");
         }
-        
+        DestroyImmediate(stegoContainer);
+        // Find and destroy the Velociraptor container if it exists
         if (raptorContainer == null)
         {
             raptorContainer = GameObject.FindGameObjectWithTag("RaptorContainer");
         }
-        
-        DestroyImmediate(stegoContainer);
-        
         DestroyImmediate(raptorContainer);
 
+        // Clear the carnivore food dictionary
         if (carnivoreFood.Count > 0)
         {
             carnivoreFood.Clear();
@@ -166,18 +183,7 @@ public class DinosaurPlacement : MonoBehaviour
             fitness -= 0.3f;
         }
         
-        // // Check for proximity to other dinosaurs of the same type
-        // foreach (var dino in allDinos)
-        // {
-        //     if (dino.GetType() == dinoType)
-        //     {
-        //         float distance = Vector3.Distance(pos, dino.transform.position);
-        //         if (distance < 100f) // Threshold distance for "close proximity"
-        //         {
-        //             fitness += 0.5f; // Increase fitness score for proximity
-        //         }
-        //     }
-        // }
+        // can add more checks here for more refined placement
 
         return fitness;
     }
@@ -196,7 +202,6 @@ public class DinosaurPlacement : MonoBehaviour
         return angle;
     }
 }
-
 [Serializable]
 public struct DinosaurPlacementData
 {

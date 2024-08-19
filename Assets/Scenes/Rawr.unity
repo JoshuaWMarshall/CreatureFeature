@@ -163,9 +163,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actions: []
-  beliefs: {fileID: 0}
+  worldStates: {fileID: 0}
   currentAction: {fileID: 0}
+  sightRadius: 200
   hunger: 0
+  energy: 100
+  thirst: 0
+  hungerRate: 1
+  energyRate: 1
+  thirstRate: 1
 --- !u!114 &66692244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,9 +195,11 @@ MonoBehaviour:
   afterEffects:
   - key: Eat
     value: 0
-  agent: {fileID: 0}
-  agentBeliefs: {fileID: 0}
+  npc: {fileID: 0}
+  gAgent: {fileID: 0}
+  targetManager: {fileID: 0}
   running: 0
+  hungerModifier: 1
 --- !u!114 &66692245
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,8 +221,9 @@ MonoBehaviour:
   afterEffects:
   - key: FoundFood
     value: 0
-  agent: {fileID: 0}
-  agentBeliefs: {fileID: 0}
+  npc: {fileID: 0}
+  gAgent: {fileID: 0}
+  targetManager: {fileID: 0}
   running: 0
 --- !u!114 &66692246
 MonoBehaviour:
@@ -237,9 +246,11 @@ MonoBehaviour:
   afterEffects:
   - key: Wait
     value: 0
-  agent: {fileID: 0}
-  agentBeliefs: {fileID: 0}
+  npc: {fileID: 0}
+  gAgent: {fileID: 0}
+  targetManager: {fileID: 0}
   running: 0
+  restModifier: 1
 --- !u!1001 &268410874
 PrefabInstance:
   m_ObjectHideFlags: 0

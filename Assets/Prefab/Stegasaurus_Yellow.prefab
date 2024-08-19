@@ -1051,7 +1051,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3354916914559454012}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f47daee6c321d94184274cee6364035, type: 3}
+  m_Script: {fileID: 11500000, guid: 4c9d87185432507489bb818742797794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   terrainLayerMask:
@@ -1276,7 +1276,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Path: []
-  speed: 50000
+  speed: 100000
   objTarget: {fileID: 0}
   currentDistance: 0
   maxRange: 100
