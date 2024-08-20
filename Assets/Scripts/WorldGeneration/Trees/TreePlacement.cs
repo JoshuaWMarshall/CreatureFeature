@@ -13,27 +13,40 @@ public class TreePlacement : MonoBehaviour
     // Containers for organizing tree and rest area GameObjects
     private GameObject restAreaContainer;
     private GameObject treeContainer;
-    
+
+    private GameManager _gameManager;
+    private bool herbivoreFoodInitialised = false;
     private void Start()
     {
-        // Find and assign the TargetManager if not already assigned
-        if (targetManager == null)
-        {
-            targetManager = FindObjectOfType<TargetManager>();
-        }
-        
-        // Initialize the herbivore food dictionary in the TargetManager
-        targetManager.InitializeHerbivoreFoodDict(herbivoreFood);
+        targetManager = FindObjectOfType<TargetManager>();
+        _gameManager = FindObjectOfType<GameManager>();
     }
 
-    // Method to place trees and rest areas based on the provided data
-    public void PlaceTrees(TreePlacementData data, TerrainGeneration terrainGeneration,
-        TerrainGenerationData terrainGenerationData, GameObject treePrefab, GameObject restAreaPrefab)
+    private void Update()
     {
-        // Clear existing trees and rest areas
-        ClearTrees(data);
+        if (_gameManager.gameStarted && !herbivoreFoodInitialised)
+        {
+            targetManager.InitializeHerbivoreFoodDict(herbivoreFood);
+            herbivoreFoodInitialised = true;
+        }
+    }
 
-        // Get the vertices of the terrain mesh
+    public void PlaceTrees(TreePlacementData data, TerrainGeneration terrainGeneration, TerrainGenerationData terrainGenerationData, GameManager manager)
+    {
+        if (_gameManager == null)
+        {
+            _gameManager = manager;
+        }
+        
+        if (data.treePrefab == null)
+        {
+            data.treePrefab = Resources.Load("Poplar_Tree") as GameObject;
+        }
+        if (data.restAreaPrefab == null)
+        {
+            data.restAreaPrefab = Resources.Load("RestArea") as GameObject;
+        }
+        
         Vector3[] vertices = terrainGeneration.mesh.vertices;
         
         // Iterate through each vertex to determine tree placement
@@ -53,9 +66,10 @@ public class TreePlacement : MonoBehaviour
                     treeContainer.name = "Tree Container";
                     treeContainer.tag = "TreeContainer";
                 }
-                
+
                 // Instantiate the tree prefab at the calculated position
-                GameObject clone = Instantiate(treePrefab, pos, Quaternion.identity, treeContainer.transform);
+                GameObject clone = Instantiate(data.treePrefab, pos, Quaternion.identity, treeContainer.transform);
+
                 clone.name = $"Poplar Tree #{i}";
                 herbivoreFood.Add(clone, true);
 
@@ -69,9 +83,9 @@ public class TreePlacement : MonoBehaviour
                         restAreaContainer.name = "Rest Area Container";
                         restAreaContainer.tag = "RestAreaContainer";
                     }
-                    
+
                     // Instantiate the rest area prefab at a nearby position
-                    GameObject restArea = Instantiate(restAreaPrefab, pos + new Vector3(Random.Range(-1, 1), 0, Random.Range(-1, 1)),
+                    GameObject restArea = Instantiate(data.restAreaPrefab, pos + new Vector3(Random.Range(-5, 5), 0, Random.Range(-5, 5)),
                         Quaternion.identity, restAreaContainer.transform);
                 }
             }
@@ -82,12 +96,17 @@ public class TreePlacement : MonoBehaviour
         {
             targetManager = FindObjectOfType<TargetManager>();
         }
+
+        _gameManager.treesPlaced = true;
     }
 
-    // Method to clear existing trees and rest areas
-    public void ClearTrees(TreePlacementData data)
+    public void ClearTrees(TreePlacementData data, GameManager manager)
     {
-        // Find and assign the rest area container if not already assigned
+        if (_gameManager == null)
+        {
+            _gameManager = manager;
+        }
+
         if (restAreaContainer == null)
         {
             restAreaContainer = GameObject.FindGameObjectWithTag("RestAreaContainer");
@@ -103,11 +122,12 @@ public class TreePlacement : MonoBehaviour
         DestroyImmediate(treeContainer);
         DestroyImmediate(restAreaContainer);
 
-        // Clear the herbivore food dictionary if it contains any entries
-        if (herbivoreFood.Count > 0)
+        if (herbivoreFood is { Count: > 0 })
         {
             herbivoreFood.Clear();
         }
+        
+        _gameManager.treesPlaced = false;
     }
 
     // Method to calculate the fitness of a vertex for tree placement
@@ -162,6 +182,8 @@ public struct TreePlacementData
     public float intensity; // Intensity of tree placement
     public float randomness; // Randomness factor for tree placement
     public float maxSteepness; // Maximum steepness of terrain where trees can be placed
+    public GameObject treePrefab;
+    public GameObject restAreaPrefab;
     
     // Loads TreePlacementData from EditorPrefs using the specified save name
     public static TreePlacementData Load(string saveName)

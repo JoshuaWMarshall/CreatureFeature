@@ -6,12 +6,11 @@ using UnityEditor.SceneManagement;
 
 public class DinosaurPlacementEditor : EditorWindow
 {
+    public GameManager gameManager;
     private DinosaurPlacementData data;
     private TerrainGeneration terrainGeneration;
     private DinosaurPlacement dinosaurPlacement;
-    private GameObject stegoPrefab;
     private GameObject stegoContainer;
-    private GameObject raptorPrefab;
     private GameObject raptorContainer;
     
     private static string saveName
@@ -49,10 +48,8 @@ public class DinosaurPlacementEditor : EditorWindow
         {
             terrainGeneration = FindObjectOfType<TerrainGeneration>();
             dinosaurPlacement = FindObjectOfType<DinosaurPlacement>();
+            gameManager = FindObjectOfType<GameManager>();
         }
-        
-        stegoPrefab = (GameObject)EditorGUILayout.ObjectField("Stegosaurus Prefab", stegoPrefab, typeof(GameObject), false);
-        raptorPrefab = (GameObject)EditorGUILayout.ObjectField("Velociraptor Prefab", raptorPrefab, typeof(GameObject), false);
         data.maxStegosaurus = EditorGUILayout.IntField("Max Stegosaurus", data.maxStegosaurus);
         data.maxVelociraptors = EditorGUILayout.IntField("Max Velociraptors", data.maxVelociraptors);
 
@@ -60,12 +57,12 @@ public class DinosaurPlacementEditor : EditorWindow
         {
             TerrainGenerationData terrainGenerationData = TerrainGenerationData.Load(terrainSaveName);
             
-            dinosaurPlacement.PlaceDinos(stegoPrefab, raptorPrefab, terrainGeneration, terrainGenerationData, data);
+            dinosaurPlacement.PlaceDinos(terrainGeneration, terrainGenerationData, data, gameManager);
         }
         
         if (GUILayout.Button("Clear Dinosaurs"))
         {
-            dinosaurPlacement.ClearDinos(data);
+            dinosaurPlacement.ClearDinos(data, gameManager);
         }
     }
 }

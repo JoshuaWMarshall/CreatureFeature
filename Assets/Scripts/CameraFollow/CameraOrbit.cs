@@ -1,13 +1,15 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 public class CameraOrbit : MonoBehaviour
 {
     // The target object that the camera will orbit around
     public GameObject target;
-    
-    // The initial distance from the target
+
+    public GameManager gameManager;
+
     public float distance = 10.0f;
     
     // Sensitivity of the scroll wheel for zooming
@@ -42,11 +44,13 @@ public class CameraOrbit : MonoBehaviour
     {
         // Get actions from the input actions asset
         var gameplayActionMap = inputActions.FindActionMap("Player");
-
+    
         zoomAction = gameplayActionMap.FindAction("Zoom");
         leftClickAction = gameplayActionMap.FindAction("LeftClick");
         rightClickAction = gameplayActionMap.FindAction("RightClick");
         mouseAction = gameplayActionMap.FindAction("Mouse");
+
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     private void OnEnable()
@@ -77,39 +81,42 @@ public class CameraOrbit : MonoBehaviour
 
     void LateUpdate()
     {
-        // Update distance and clamp it between min and max values
-        distance -= zoomAction.ReadValue<float>() * scrollSensitivity;
-        distance = Mathf.Clamp(distance, minDistance, maxDistance);
-
-        // Rotate the camera around the target when the right mouse button is held down
-        if (target && rightClickAction.ReadValue<float>() > 0)
+        if (gameManager.gameStarted)
         {
-            Vector2 mouseDelta = mouseAction.ReadValue<Vector2>();
-            var dpiScale = 1f;
-            if (Screen.dpi < 1) dpiScale = 1;
-            if (Screen.dpi < 200) dpiScale = 1;
-            else dpiScale = Screen.dpi / 200f;
+            // Update distance and clamp it between min and max values
+            distance -= zoomAction.ReadValue<float>() * scrollSensitivity;
+            distance = Mathf.Clamp(distance, minDistance, maxDistance);
 
-            var pos = Mouse.current.position.ReadValue();
-            if (pos.x < 380 * dpiScale && Screen.height - pos.y < 250 * dpiScale) return;
-            
-            x += mouseDelta.x * xSpeed * 0.02f;
-            y -= mouseDelta.y * ySpeed * 0.02f;
+            // Rotate the camera around the target when the right mouse button is held down
+            if (target && rightClickAction.ReadValue<float>() > 0)
+            {
+                Vector2 mouseDelta = mouseAction.ReadValue<Vector2>();
+                var dpiScale = 1f;
+                if (Screen.dpi < 1) dpiScale = 1;
+                if (Screen.dpi < 200) dpiScale = 1;
+                else dpiScale = Screen.dpi / 200f;
 
-            y = ClampAngle(y, yMinLimit, yMaxLimit);
-            var rotation = Quaternion.Euler(y, x, 0);
-            var position = rotation * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
-            transform.rotation = rotation;
-            transform.position = position;
-        }
+                var pos = Mouse.current.position.ReadValue();
+                if (pos.x < 380 * dpiScale && Screen.height - pos.y < 250 * dpiScale) return;
 
-        // Update the camera position and rotation based on the target's position
-        if (target)
-        {
-            var rot = Quaternion.Euler(y, x, 0);
-            var po = rot * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
-            transform.rotation = rot;
-            transform.position = po;
+                x += mouseDelta.x * xSpeed * 0.02f;
+                y -= mouseDelta.y * ySpeed * 0.02f;
+
+                y = ClampAngle(y, yMinLimit, yMaxLimit);
+                var rotation = Quaternion.Euler(y, x, 0);
+                var position = rotation * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
+                transform.rotation = rotation;
+                transform.position = position;
+            }
+
+            // Update the camera position and rotation based on the target's position
+            if (target)
+            {
+                var rot = Quaternion.Euler(y, x, 0);
+                var po = rot * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
+                transform.rotation = rot;
+                transform.position = po;
+            }
         }
     }
 
@@ -123,7 +130,6 @@ public class CameraOrbit : MonoBehaviour
         return Mathf.Clamp(angle, min, max);
     }
     
-    // Update the camera position based on mouse input
     public void UpdateCameraPosition()
     {
         Vector2 mouseDelta = mouseAction.ReadValue<Vector2>();

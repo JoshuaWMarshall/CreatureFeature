@@ -9,7 +9,7 @@ public class Resting : GAction
     
     // Modifier to adjust the amount of energy gained during rest
     public float restModifier = 1;
-   
+
     // Method called before the action is performed
     public override bool PrePerform()
     {
@@ -21,6 +21,7 @@ public class Resting : GAction
     public override bool PostPerform()
     {
         // Increase the agent's energy by a value modified by the restModifier
+
         gAgent.energy += 10 * restModifier;
         return true;
     }

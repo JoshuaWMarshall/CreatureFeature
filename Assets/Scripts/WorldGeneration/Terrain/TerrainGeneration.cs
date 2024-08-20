@@ -4,13 +4,11 @@ using UnityEditor;
 
 public class TerrainGeneration : MonoBehaviour
 {
-    // Flag to check if the terrain has been generated
-    private bool isTerrainGenerated = false;
-    
-    // Mesh object to hold the generated terrain mesh
+
     [HideInInspector] public Mesh mesh;
-    
-    // Arrays to store vertices and triangles of the mesh
+    private GameManager _gameManager;
+    private GameObject waterMeshPrefab;
+
     private Vector3[] vertices;
     private int[] triangles;
     
@@ -23,11 +21,19 @@ public class TerrainGeneration : MonoBehaviour
 
     // Variable to store the new seed value for noise generation
     private int newSeed;
-    
-    // Method to generate the terrain based on the provided data
-    public void GenerateTerrain(TerrainGenerationData data)
+
+    private void Start()
     {
-        // Initialize the mesh and assign it to the MeshFilter component
+        _gameManager = FindObjectOfType<GameManager>();
+    }
+
+    public void GenerateTerrain(TerrainGenerationData data, GameManager manager)
+    {
+        if (_gameManager == null)
+        {
+            _gameManager = manager;
+        }
+
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         
@@ -40,25 +46,24 @@ public class TerrainGeneration : MonoBehaviour
         CreateTriangles(data);
         ColourMap(data);
         UpdateMesh(data);
-        
-        // Set the terrain generated flag to true
-        isTerrainGenerated = true;
+
+        _gameManager.meshGenerated = true;
     }
 
-    // Method to destroy the generated terrain
-    public void DestroyTerrain(TerrainGenerationData data)
+    public void DestroyTerrain(TerrainGenerationData data, GameManager manager)
     {
-        // Clear the mesh from the MeshFilter and MeshCollider components
+        if (_gameManager == null)
+        {
+            _gameManager = manager;
+        }
+
         MeshFilter meshFilter = GetComponent<MeshFilter>();
         meshFilter.sharedMesh = null;
         MeshCollider meshCollider = GetComponent<MeshCollider>();
         meshCollider.sharedMesh = null;
         mesh = null;
         
-        // Set the terrain generated flag to false
-        isTerrainGenerated = false;
-        
-        // Destroy any existing water mesh
+        // Destroy water mesh
         if (data.waterMesh != null)
         {
             DestroyImmediate(data.waterMesh);
@@ -70,6 +75,8 @@ public class TerrainGeneration : MonoBehaviour
             DestroyImmediate(data.waterMesh);
             data.waterMesh = null;
         }
+
+        _gameManager.meshGenerated = false;
     }
     
     // Method to create the shape of the mesh based on noise data
@@ -176,22 +183,17 @@ public class TerrainGeneration : MonoBehaviour
     }
     
     // Method to create a water mesh based on the provided prefab
-    public void CreateWaterMesh(TerrainGenerationData data, GameObject waterMeshPrefab)
+    public void CreateWaterMesh(TerrainGenerationData data)
     {
-        // Destroy any existing water mesh
-        if (data.waterMesh != null)
+        if (waterMeshPrefab == null)
         {
-            DestroyImmediate(data.waterMesh);
-            data.waterMesh = null;
-        }
-        else
-        {
-            data.waterMesh = GameObject.FindGameObjectWithTag("Water");
-            DestroyImmediate(data.waterMesh);
-            data.waterMesh = null;
+            waterMeshPrefab = Resources.Load("WaterBlock_50m") as GameObject;
         }
         
-        // Instantiate the new water mesh if the prefab is provided
+        data.waterMesh = GameObject.FindGameObjectWithTag("Water");
+        DestroyImmediate(data.waterMesh);
+        data.waterMesh = null;
+
         if (waterMeshPrefab != null)
         {
             data.waterMesh = Instantiate(waterMeshPrefab, new Vector3((data.xSize * data.meshScale/2), data.waterHeight, (data.zSize * data.meshScale/2)), Quaternion.identity);

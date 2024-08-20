@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 123950853846377578}
   - component: {fileID: 4479353170158918341}
   m_Layer: 15
-  m_Name: Raptor_Blue 1
+  m_Name: Raptor_Blue
   m_TagString: Carnivore
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
