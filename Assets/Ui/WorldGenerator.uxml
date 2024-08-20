@@ -1,0 +1,49 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
+        <ui:VisualElement name="WorldGenPanel" style="flex-grow: 1; flex-shrink: 0; flex-direction: row; display: flex; left: 0; top: auto;">
+            <ui:VisualElement style="flex-grow: 1; flex-shrink: 0; margin-top: 20px; margin-right: 0; margin-bottom: 20px; margin-left: 20px; display: flex; visibility: visible;">
+                <ui:VisualElement name="ButtonContainer" style="flex-grow: 1; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; flex-shrink: 0; background-color: rgb(255, 255, 255); flex-direction: row; padding-top: 20px; padding-right: 20px; padding-bottom: 0; padding-left: 20px; justify-content: flex-start; height: auto;">
+                    <ui:Button text="1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button_TerrainGen" style="flex-grow: 1; flex-shrink: 1;" />
+                    <ui:Button text="2" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button_TreePlacement" style="flex-grow: 1; flex-shrink: 1;" />
+                    <ui:Button text="3" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button_DinoPlacement" style="flex-shrink: 1; flex-grow: 1;" />
+                </ui:VisualElement>
+                <ui:ScrollView name="ScrollView_TerrainGen" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; background-color: rgb(255, 255, 255); padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px; display: flex; flex-direction: column; flex-shrink: 0; flex-grow: 1;">
+                    <ui:Label tabindex="-1" text="Terrain Generation" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label_TerrainGenTitle" style="align-items: auto; -unity-text-align: upper-center; -unity-font-style: bold;" />
+                    <ui:Toggle label="Randomise Seed" name="Toggle_RandomiseSeed" value="true" tabindex="0" style="margin-top: 4px; margin-right: 4px; margin-bottom: 4px; margin-left: 4px; align-self: auto;" />
+                    <ui:IntegerField label="Seed" value="42" name="IntegerField_Seed" style="margin-top: 4px; margin-right: 4px; margin-bottom: 4px; margin-left: 4px;" />
+                    <ui:Slider label="Noise Scale" high-value="100" name="Slider_NoiseScale" show-input-field="true" page-size="0" inverted="false" direction="Horizontal" style="margin-top: 4px; margin-right: 4px; margin-bottom: 4px; margin-left: 4px;" />
+                    <ui:Slider label="Lacunarity" high-value="10" name="Slider_Lacunarity" show-input-field="true" style="margin-top: 4px; margin-right: 4px; margin-bottom: 4px; margin-left: 4px;" />
+                    <ui:SliderInt label="Octaves" high-value="10" name="SliderInt_Octaves" show-input-field="true" />
+                    <ui:SliderInt label="Mesh X Size" high-value="100" name="SliderInt_MeshXSize" show-input-field="true" />
+                    <ui:SliderInt label="Mesh Z Size" high-value="100" name="SliderInt_MeshZSize" show-input-field="true" style="margin-top: 4px; margin-right: 4px; margin-bottom: 4px; margin-left: 4px;" />
+                    <ui:SliderInt label="Mesh Scale" high-value="200" name="SliderInt_MeshScale" show-input-field="true" low-value="1" style="margin-top: 4px; margin-right: 4px; margin-bottom: 4px; margin-left: 4px;" />
+                    <ui:Slider label="Height Multiplier" high-value="10" name="Slider_HeightMultiplier" low-value="1" show-input-field="true" />
+                    <ui:SliderInt label="Water Height" high-value="500" name="SliderInt_WaterHeight" show-input-field="true" style="margin-top: 4px; margin-right: 4px; margin-bottom: 4px; margin-left: 4px;" />
+                    <ui:Button text="Generate Terrain" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button_GenerateTerrain" style="margin-top: 4px; margin-right: 4px; margin-bottom: 4px; margin-left: 4px;" />
+                </ui:ScrollView>
+                <ui:ScrollView name="ScrollView_TreePlacement" style="flex-shrink: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; background-color: rgb(255, 255, 255); padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px; display: none; flex-grow: 1;">
+                    <ui:Label tabindex="-1" text="Tree Placement" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label_TreePlacementTitle" style="align-items: auto; -unity-text-align: upper-center; -unity-font-style: bold;" />
+                    <ui:Slider label="Noise Scale" high-value="100" name="Slider_NoiseScale" show-input-field="true" style="margin-top: 4px; margin-right: 4px; margin-bottom: 4px; margin-left: 4px;" />
+                    <ui:Slider label="Lacunarity" high-value="10" name="Slider_Lacunarity" show-input-field="true" style="display: flex;" />
+                    <ui:SliderInt label="Octaves" high-value="10" name="SliderInt_Octaves" show-input-field="true" />
+                    <ui:Slider label="Intensity" high-value="1" name="Slider_Intensity" show-input-field="true" />
+                    <ui:Slider label="Randomness" high-value="1" name="Slider_Randomness" show-input-field="true" />
+                    <ui:SliderInt label="Max Steepness" high-value="90" name="SliderInt_MaxSteepness" show-input-field="true" />
+                    <ui:Button text="Place Trees" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button_PlaceTrees" style="margin-top: 4px; margin-right: 4px; margin-bottom: 4px; margin-left: 4px;" />
+                </ui:ScrollView>
+                <ui:ScrollView name="ScrollView_DinosaurPlacement" style="flex-shrink: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; background-color: rgb(255, 255, 255); padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px; display: none; flex-grow: 1;">
+                    <ui:Label tabindex="-1" text="Dinosaur Placement" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label_DinoPlacementTitle" style="align-items: auto; -unity-text-align: upper-center; -unity-font-style: bold;" />
+                    <ui:SliderInt label="Maximum Stegosaurus" high-value="100" name="SliderInt_MaxStegos" show-input-field="true" />
+                    <ui:SliderInt label="Maximum Velociraptors" high-value="100" name="SliderInt_MaxRaptors" show-input-field="true" />
+                    <ui:Button text="Place Dinosaurs" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button_PlaceDinos" style="margin-top: 4px; margin-right: 4px; margin-bottom: 4px; margin-left: 4px;" />
+                </ui:ScrollView>
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 0; width: 25px; flex-shrink: 0;">
+                <ui:VisualElement style="flex-grow: 1; flex-shrink: 1;" />
+                <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="OpenClose" style="flex-grow: 1; background-color: rgb(255, 255, 255); border-top-left-radius: 0; border-top-right-radius: 15px; border-bottom-right-radius: 15px; border-bottom-left-radius: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; flex-shrink: 0; display: none;" />
+                <ui:VisualElement style="flex-grow: 1; flex-shrink: 1;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement style="flex-grow: 0; width: 60%;" />
+    </ui:VisualElement>
+</ui:UXML>

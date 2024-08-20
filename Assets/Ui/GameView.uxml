@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="WorldGenerator" src="project://database/Assets/Ui/WorldGenerator.uxml?fileID=9197481963319205126&amp;guid=a8f1abd8aed2c8741bc832586225f0dd&amp;type=3#WorldGenerator" />
+    <ui:Template name="DinoViewer" src="project://database/Assets/Ui/DinoViewer.uxml?fileID=9197481963319205126&amp;guid=9aa2d15794717af438f68f7bc3a156cc&amp;type=3#DinoViewer" />
+    <ui:Instance template="WorldGenerator" name="WorldGenerator" style="display: flex;" />
+    <ui:Instance template="DinoViewer" name="DinoViewer" style="display: none; flex-grow: 1;" />
+</ui:UXML>

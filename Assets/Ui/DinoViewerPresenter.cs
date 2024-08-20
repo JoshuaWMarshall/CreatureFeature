@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 public class DinoViewerPresenter 
 {
-    private UiController uiController;
+    private GameManager _gameManager;
     public List<GameObject> displayedDinos = new List<GameObject>();
     public List<GameObject> stegosaurus = new List<GameObject>();
     public List<GameObject> velociraptor = new List<GameObject>();
@@ -53,7 +53,7 @@ public class DinoViewerPresenter
     private VisualElement thirstSliderFillBar;
     private VisualElement energySliderFillBar;
 
-    public DinoViewerPresenter(VisualElement root, UiController uiController)
+    public DinoViewerPresenter(VisualElement root, GameManager gameManager)
     {
         contents = root.Q<VisualElement>("Contents");
         seedNumber = root.Q<Label>("Label_SeedNum");
@@ -89,7 +89,7 @@ public class DinoViewerPresenter
         //thirstSlider.RegisterValueChangedCallback((value) => SetDinoThirst(value.newValue));
         //energySlider.RegisterValueChangedCallback((value) => SetDinoEnergy(value.newValue));
 
-        this.uiController = uiController;
+        this._gameManager = gameManager;
     }
     
     private void ToggleDinoViewer()
@@ -139,7 +139,7 @@ public class DinoViewerPresenter
         
         if (currentDino!)
         {
-            uiController.currentDino = currentDino;
+            _gameManager.currentDino = currentDino;
 
             cameraOrbit.target = displayedDinos[currentIndex];
             cameraOrbit.UpdateCameraPosition();

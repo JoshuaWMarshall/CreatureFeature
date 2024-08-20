@@ -1,10 +1,12 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 public class CameraOrbit : MonoBehaviour
 {
     public GameObject target;
+    [FormerlySerializedAs("uiController")] public GameManager gameManager;
     public float distance = 10.0f;
     public float scrollSensitivity = 2f;
     public float minDistance = 20f; // Minimum zoom distance
@@ -33,11 +35,13 @@ public class CameraOrbit : MonoBehaviour
     {
         // Get actions from the input actions asset
         var gameplayActionMap = inputActions.FindActionMap("Player");
-
+    
         zoomAction = gameplayActionMap.FindAction("Zoom");
         leftClickAction = gameplayActionMap.FindAction("LeftClick");
         rightClickAction = gameplayActionMap.FindAction("RightClick");
         mouseAction = gameplayActionMap.FindAction("Mouse");
+
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     private void OnEnable()
@@ -65,38 +69,41 @@ public class CameraOrbit : MonoBehaviour
 
     void LateUpdate()
     {
-        // Update distance and clamp it between min and max values
-        distance -= zoomAction.ReadValue<float>() * scrollSensitivity;
-        distance = Mathf.Clamp(distance, minDistance, maxDistance);
-
-        if (target && rightClickAction.ReadValue<float>() > 0)
+        if (gameManager.gameStarted)
         {
-            Vector2 mouseDelta = mouseAction.ReadValue<Vector2>();
-            var dpiScale = 1f;
-            if (Screen.dpi < 1) dpiScale = 1;
-            if (Screen.dpi < 200) dpiScale = 1;
-            else dpiScale = Screen.dpi / 200f;
+            // Update distance and clamp it between min and max values
+            distance -= zoomAction.ReadValue<float>() * scrollSensitivity;
+            distance = Mathf.Clamp(distance, minDistance, maxDistance);
 
-            var pos = Mouse.current.position.ReadValue();
-            if (pos.x < 380 * dpiScale && Screen.height - pos.y < 250 * dpiScale) return;
+            if (target && rightClickAction.ReadValue<float>() > 0)
+            {
+                Vector2 mouseDelta = mouseAction.ReadValue<Vector2>();
+                var dpiScale = 1f;
+                if (Screen.dpi < 1) dpiScale = 1;
+                if (Screen.dpi < 200) dpiScale = 1;
+                else dpiScale = Screen.dpi / 200f;
+
+                var pos = Mouse.current.position.ReadValue();
+                if (pos.x < 380 * dpiScale && Screen.height - pos.y < 250 * dpiScale) return;
             
-            x += mouseDelta.x * xSpeed * 0.02f;
-            y -= mouseDelta.y * ySpeed * 0.02f;
+                x += mouseDelta.x * xSpeed * 0.02f;
+                y -= mouseDelta.y * ySpeed * 0.02f;
 
-            y = ClampAngle(y, yMinLimit, yMaxLimit);
-            var rotation = Quaternion.Euler(y, x, 0);
-            var position = rotation * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
-            transform.rotation = rotation;
-            transform.position = position;
-        }
+                y = ClampAngle(y, yMinLimit, yMaxLimit);
+                var rotation = Quaternion.Euler(y, x, 0);
+                var position = rotation * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
+                transform.rotation = rotation;
+                transform.position = position;
+            }
 
-        if (target)
-        {
-            prevDistance = distance;
-            var rot = Quaternion.Euler(y, x, 0);
-            var po = rot * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
-            transform.rotation = rot;
-            transform.position = po;
+            if (target)
+            {
+                prevDistance = distance;
+                var rot = Quaternion.Euler(y, x, 0);
+                var po = rot * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
+                transform.rotation = rot;
+                transform.position = po;
+            }
         }
     }
 

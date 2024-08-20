@@ -5,8 +5,8 @@ public class TerrainGenerationEditor : EditorWindow
 {
     private TerrainGenerationData data;
     public TerrainGeneration terrainGeneration;
+    public GameManager gameManager;
     private int newSeed;
-    private GameObject waterMeshPrefab;
     
     private string[] terrainTypes = { "Custom","Big Hill", "Valley", "Rolling Hills" };
     private int selectedTerrainTypeIndex = 0;
@@ -41,6 +41,7 @@ public class TerrainGenerationEditor : EditorWindow
         if (GUILayout.Button("Find References"))
         {
             terrainGeneration = FindObjectOfType<TerrainGeneration>();
+            gameManager = FindObjectOfType<GameManager>();
         }
         
         //selectedTerrainTypeIndex = EditorGUILayout.Popup("Terrain Presets", selectedTerrainTypeIndex, terrainTypes);
@@ -75,9 +76,6 @@ public class TerrainGenerationEditor : EditorWindow
         data.zSize =  EditorGUILayout.IntField("Mesh Z Size", data.zSize);
         data.meshScale =  EditorGUILayout.IntField("Mesh Scale", data.meshScale);
         data.heightMultiplier =  EditorGUILayout.Slider("Height Multiplier", data.heightMultiplier, 1, 10);
-
-        waterMeshPrefab =
-            (GameObject)EditorGUILayout.ObjectField("Water Mesh Prefab", waterMeshPrefab, typeof(GameObject), false);
         data.waterHeight = EditorGUILayout.FloatField("Water Height", data.waterHeight);
         
         // If any terrain property was changed, switch to "Custom"
@@ -89,13 +87,13 @@ public class TerrainGenerationEditor : EditorWindow
         
         if (GUILayout.Button("Generate Terrain"))
         {
-            terrainGeneration.GenerateTerrain(data);
-            terrainGeneration.CreateWaterMesh(data, waterMeshPrefab);
+            terrainGeneration.GenerateTerrain(data, gameManager);
+            terrainGeneration.CreateWaterMesh(data);
         }
 
         if (GUILayout.Button("Destroy Terrain"))
         {
-            terrainGeneration.DestroyTerrain(data);
+            terrainGeneration.DestroyTerrain(data, gameManager);
         }
     }
     

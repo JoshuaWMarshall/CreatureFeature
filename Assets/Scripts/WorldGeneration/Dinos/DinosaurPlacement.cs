@@ -13,21 +13,47 @@ public class DinosaurPlacement : MonoBehaviour
     private GameObject stegoContainer;
     private GameObject raptorContainer;
     
-    
     private TargetManager targetManager;
+    private GameManager _gameManager;
+
+    private bool carnivoreFoodInitialised = false;
+    
     private void Start()
     {
         if (targetManager == null)
         {
             targetManager = FindObjectOfType<TargetManager>();
         }
-        
-        targetManager.InitializeCarnivoreFoodDict(carnivoreFood);
+
+        _gameManager = FindObjectOfType<GameManager>();
     }
-    
-    public void PlaceDinos(GameObject stegoPrefab, GameObject raptorPrefab, TerrainGeneration terrainGeneration, 
-        TerrainGenerationData terrainGenerationData, DinosaurPlacementData data)
+
+    private void Update()
     {
+        if (_gameManager.gameStarted && !carnivoreFoodInitialised)
+        {
+            targetManager.InitializeCarnivoreFoodDict(carnivoreFood);
+            carnivoreFoodInitialised = true;
+        }
+    }
+
+    public void PlaceDinos(TerrainGeneration terrainGeneration, 
+        TerrainGenerationData terrainGenerationData, DinosaurPlacementData data, GameManager manager)
+    {
+        if (_gameManager == null)
+        {
+            _gameManager = manager;
+        }
+        
+        if (data.stegoPrefab == null)
+        {
+            data.stegoPrefab = Resources.Load("Stegasaurus_Yellow") as GameObject;
+        }
+        if (data.raptorPrefab == null)
+        {
+            data.raptorPrefab = Resources.Load("Raptor_Blue") as GameObject;
+        }
+        
         Vector3[] vertices = terrainGeneration.mesh.vertices;
 
         for (int i = 0; i < data.maxStegosaurus; i++)
@@ -47,7 +73,7 @@ public class DinosaurPlacement : MonoBehaviour
                 }
             }
 
-            if (stegoPrefab!= null)
+            if (data.stegoPrefab!= null)
             {
                 if (stegoContainer == null)
                 {
@@ -57,7 +83,7 @@ public class DinosaurPlacement : MonoBehaviour
                 }
                 
 
-                GameObject clone = Instantiate(stegoPrefab,  worldPt, Quaternion.identity, stegoContainer.transform);
+                GameObject clone = Instantiate(data.stegoPrefab,  worldPt, Quaternion.identity, stegoContainer.transform);
                 carnivoreFood.Add(clone, true);
             
                 clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
@@ -89,7 +115,7 @@ public class DinosaurPlacement : MonoBehaviour
                 }
             }
 
-            if (raptorPrefab != null)
+            if (data.raptorPrefab != null)
             {
                 if (raptorContainer == null)
                 {
@@ -98,17 +124,25 @@ public class DinosaurPlacement : MonoBehaviour
                     raptorContainer.tag = "RaptorContainer";
                 }
                 
-                GameObject clone = Instantiate(raptorPrefab, worldPt, Quaternion.identity, raptorContainer.transform);
+                GameObject clone = Instantiate(data.raptorPrefab, worldPt, Quaternion.identity, raptorContainer.transform);
             
                 clone.transform.localScale = Vector3.one * Random.Range(.8f, 1.2f);
                 clone.name = $"Velociraptor #{i}";
                 allDinos.Add(clone.GetComponent<GAgent>());
             }
         }
+
+        _gameManager.dinosPlaced = true;
     }
 
-    public void ClearDinos(DinosaurPlacementData data)
+    public void ClearDinos(DinosaurPlacementData data, GameManager manager)
     {
+        
+        if (_gameManager == null)
+        {
+            _gameManager = manager;
+        }
+        
         if (stegoContainer == null)
         {
             stegoContainer = GameObject.FindGameObjectWithTag("StegoContainer");
@@ -123,10 +157,12 @@ public class DinosaurPlacement : MonoBehaviour
         
         DestroyImmediate(raptorContainer);
 
-        if (carnivoreFood.Count > 0)
+        if (carnivoreFood is { Count: > 0 })
         {
             carnivoreFood.Clear();
         }
+
+        _gameManager.dinosPlaced = false;
     }
     
     private Vector3 GetRandomInnerVertex(Vector3[] vertices, int xSize, int zSize, out int vertexIndex)
@@ -202,6 +238,9 @@ public struct DinosaurPlacementData
 {
     public int maxStegosaurus;
     public int maxVelociraptors;
+    public GameObject stegoPrefab;
+    public GameObject raptorPrefab; 
+    
     public static DinosaurPlacementData Load(string saveName)
     {
         DinosaurPlacementData data;

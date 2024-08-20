@@ -8,7 +8,7 @@ public class TargetManager : MonoBehaviour
     // key: food game object, value: is it currently available
     public Dictionary<GameObject, bool> herbivoreFood;
     public Dictionary<GameObject, bool> carnivoreFood;
-
+    
     // Method to initialize the dictionaries
     public void InitializeHerbivoreFoodDict(Dictionary<GameObject, bool> herbivoreFoodDict)
     {

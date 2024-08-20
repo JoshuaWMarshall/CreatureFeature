@@ -4,9 +4,9 @@ using UnityEditor;
 
 public class TerrainGeneration : MonoBehaviour
 {
-    private bool isTerrainGenerated = false;
     [HideInInspector] public Mesh mesh;
-    
+    private GameManager _gameManager;
+    private GameObject waterMeshPrefab;
     private Vector3[] vertices;
     private int[] triangles;
     
@@ -15,9 +15,18 @@ public class TerrainGeneration : MonoBehaviour
     private Color[] colours;
 
     private int newSeed;
-    
-    public void GenerateTerrain(TerrainGenerationData data)
+
+    private void Start()
     {
+        _gameManager = FindObjectOfType<GameManager>();
+    }
+
+    public void GenerateTerrain(TerrainGenerationData data, GameManager manager)
+    {
+        if (_gameManager == null)
+        {
+            _gameManager = manager;
+        }
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         minTerrainheight = float.MaxValue;
@@ -27,20 +36,22 @@ public class TerrainGeneration : MonoBehaviour
         CreateTriangles(data);
         ColourMap(data);
         UpdateMesh(data);
-        
-        isTerrainGenerated = true;
+
+        _gameManager.meshGenerated = true;
     }
 
-    public void DestroyTerrain(TerrainGenerationData data)
+    public void DestroyTerrain(TerrainGenerationData data, GameManager manager)
     {
+        if (_gameManager == null)
+        {
+            _gameManager = manager;
+        }
+        
         MeshFilter meshFilter = GetComponent<MeshFilter>();
         meshFilter.sharedMesh = null;
         MeshCollider meshCollider = GetComponent<MeshCollider>();
         meshCollider.sharedMesh = null;
         mesh = null;
-        isTerrainGenerated = false;
-        
-        //Destroy dinos
         
         // Destroy water mesh
         if (data.waterMesh != null)
@@ -55,7 +66,7 @@ public class TerrainGeneration : MonoBehaviour
             data.waterMesh = null;
         }
 
-        //Destroy trees
+        _gameManager.meshGenerated = false;
     }
     
     private void CreateMeshShape(TerrainGenerationData data)
@@ -145,20 +156,16 @@ public class TerrainGeneration : MonoBehaviour
         gameObject.layer = 13;
     }
     
-    public void CreateWaterMesh(TerrainGenerationData data, GameObject waterMeshPrefab)
+    public void CreateWaterMesh(TerrainGenerationData data)
     {
-        // Clear old mesh if it exists
-        if (data.waterMesh != null)
+        if (waterMeshPrefab == null)
         {
-            DestroyImmediate(data.waterMesh);
-            data.waterMesh = null;
+            waterMeshPrefab = Resources.Load("WaterBlock_50m") as GameObject;
         }
-        else
-        {
-            data.waterMesh = GameObject.FindGameObjectWithTag("Water");
-            DestroyImmediate(data.waterMesh);
-            data.waterMesh = null;
-        }
+        
+        data.waterMesh = GameObject.FindGameObjectWithTag("Water");
+        DestroyImmediate(data.waterMesh);
+        data.waterMesh = null;
         
         if (waterMeshPrefab != null)
         {

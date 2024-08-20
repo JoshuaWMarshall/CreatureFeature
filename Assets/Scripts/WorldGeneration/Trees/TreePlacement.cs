@@ -11,20 +11,40 @@ public class TreePlacement : MonoBehaviour
     private Dictionary<GameObject, bool> herbivoreFood = new Dictionary<GameObject, bool>();
     private GameObject restAreaContainer;
     private GameObject treeContainer;
+    private GameManager _gameManager;
+    private bool herbivoreFoodInitialised = false;
     private void Start()
     {
-        if (targetManager == null)
-        {
-            targetManager = FindObjectOfType<TargetManager>();
-        }
-        
-        targetManager.InitializeHerbivoreFoodDict(herbivoreFood);
+        targetManager = FindObjectOfType<TargetManager>();
+        _gameManager = FindObjectOfType<GameManager>();
     }
 
-    public void PlaceTrees(TreePlacementData data, TerrainGeneration terrainGeneration, TerrainGenerationData terrainGenerationData, GameObject treePrefab, GameObject restAreaPrefab)
+    private void Update()
     {
-        ClearTrees(data);
+        if (_gameManager.gameStarted && !herbivoreFoodInitialised)
+        {
+            targetManager.InitializeHerbivoreFoodDict(herbivoreFood);
+            herbivoreFoodInitialised = true;
+        }
+    }
 
+    public void PlaceTrees(TreePlacementData data, TerrainGeneration terrainGeneration, TerrainGenerationData terrainGenerationData, GameManager manager)
+    {
+        if (_gameManager == null)
+        {
+            _gameManager = manager;
+        }
+        
+        if (data.treePrefab == null)
+        {
+            data.treePrefab = Resources.Load("Poplar_Tree") as GameObject;
+        }
+        if (data.restAreaPrefab == null)
+        {
+            data.restAreaPrefab = Resources.Load("RestArea") as GameObject;
+        }
+        
+        
         Vector3[] vertices = terrainGeneration.mesh.vertices;
         
         for (int i = 0; i < vertices.Length; i++)
@@ -42,7 +62,7 @@ public class TreePlacement : MonoBehaviour
                     treeContainer.tag = "TreeContainer";
                 }
                 
-                GameObject clone = Instantiate(treePrefab, pos, Quaternion.identity, treeContainer.transform);
+                GameObject clone = Instantiate(data.treePrefab, pos, Quaternion.identity, treeContainer.transform);
                 clone.name = $"Poplar Tree #{i}";
                 herbivoreFood.Add(clone, true);
 
@@ -55,7 +75,7 @@ public class TreePlacement : MonoBehaviour
                         restAreaContainer.tag = "RestAreaContainer";
                     }
                     
-                    GameObject restArea = Instantiate(restAreaPrefab, pos + new Vector3(Random.Range(-1, 1), 0, Random.Range(-1, 1)),
+                    GameObject restArea = Instantiate(data.restAreaPrefab, pos + new Vector3(Random.Range(-5, 5), 0, Random.Range(-5, 5)),
                         Quaternion.identity, restAreaContainer.transform);
                 }
             }
@@ -65,9 +85,16 @@ public class TreePlacement : MonoBehaviour
         {
             targetManager = FindObjectOfType<TargetManager>();
         }
+
+        _gameManager.treesPlaced = true;
     }
-    public void ClearTrees(TreePlacementData data)
+    public void ClearTrees(TreePlacementData data, GameManager manager)
     {
+        if (_gameManager == null)
+        {
+            _gameManager = manager;
+        }
+        
         if (restAreaContainer == null)
         {
             restAreaContainer = GameObject.FindGameObjectWithTag("RestAreaContainer");
@@ -81,11 +108,13 @@ public class TreePlacement : MonoBehaviour
         DestroyImmediate(treeContainer);
         
         DestroyImmediate(restAreaContainer);
-
-        if (herbivoreFood.Count > 0)
+        
+        if (herbivoreFood is { Count: > 0 })
         {
             herbivoreFood.Clear();
         }
+        
+        _gameManager.treesPlaced = false;
     }
 
     private float Fitness(Texture2D noiseMap, Mesh mesh, float meshScale, float maxSteepness, float waterHeight, int index)
@@ -136,6 +165,8 @@ public struct TreePlacementData
     public float noiseScale;
     public int octaves;
     public float lacunarity;
+    public GameObject treePrefab;
+    public GameObject restAreaPrefab;
     
     // tree variable
     public float intensity;
